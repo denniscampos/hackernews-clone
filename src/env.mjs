@@ -28,6 +28,7 @@ export const env = createEnv({
     GITHUB_CLIENT_SECRET: process.env.GITHUB_CLIENT_SECRET,
     NEXTAUTH_URL: process.env.NEXTAUTH_URL,
     NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
+    NODE_ENV: process.env.NODE_ENV,
     // NEXT_PUBLIC_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_PUBLISHABLE_KEY,
   },
 });
