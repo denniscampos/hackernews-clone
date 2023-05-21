@@ -42,13 +42,16 @@ model Session {
 }
 
 model User {
-  id            String    @id @default(cuid())
+  id            String     @id @default(cuid())
   name          String?
-  email         String?   @unique
+  email         String?    @unique
   emailVerified DateTime?
   image         String?
   accounts      Account[]
   sessions      Session[]
+  post          Post[]
+  hidePost      HidePost[]
+  comment       Comment[]
 }
 
 model VerificationToken {
@@ -57,4 +60,55 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+model Post {
+  id       String     @id @default(cuid())
+  title    String
+  author   User       @relation(fields: [authorId], references: [id])
+  authorId String
+  points   Int        @default(0)
+  url      String?
+  text     String?
+  comment  Comment[]
+  HidePost HidePost[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([points])
+  @@index([authorId])
+}
+
+model Comment {
+  id      String @id @default(cuid())
+  content String
+  post    Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId  String
+  user    User   @relation(fields: [userId], references: [id])
+  userId  String
+  vote    Int    @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // users should vote only once
+  @@unique([vote])
+  @@index([userId])
+  @@index([postId])
+}
+
+model HidePost {
+  id       String  @id @default(cuid())
+  post     Post    @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId   String
+  user     User    @relation(fields: [userId], references: [id])
+  userId   String
+  isHidden Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([postId])
+  @@index([userId])
 }
