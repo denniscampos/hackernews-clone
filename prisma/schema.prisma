@@ -67,7 +67,7 @@ model Post {
   title    String
   author   User       @relation(fields: [authorId], references: [id])
   authorId String
-  points   Int        @default(0)
+  points   Int?       @default(0)
   url      String?
   text     String?
   comment  Comment[]
@@ -76,7 +76,7 @@ model Post {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@unique([points])
+  // @@unique([points]) //commented out for now until I figure out how to do it right
   @@index([authorId])
 }
 
