@@ -17,7 +17,7 @@ export function SignIn({
         <Button
           variant="link"
           onClick={() => {
-            signOut();
+            signOut({ callbackUrl: '/' });
             router.refresh();
           }}
         >

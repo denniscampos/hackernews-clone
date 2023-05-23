@@ -5,6 +5,7 @@ import { Label } from './ui/label';
 import { Textarea } from './ui/textarea';
 import { Prisma } from '@prisma/client';
 import { User } from 'next-auth';
+import { redirect } from 'next/navigation';
 
 export async function PostSubmitForm({ user }: { user?: User }) {
   async function postForm(data: FormData): Promise<void> {
@@ -28,6 +29,8 @@ export async function PostSubmitForm({ user }: { user?: User }) {
         authorId: userTest?.id as string,
       },
     });
+
+    redirect('/');
   }
 
   return (

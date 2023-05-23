@@ -1,9 +1,12 @@
 import { PostCard } from '@/components/PostCard';
+import { db } from '@/lib/db';
 
-export default function Home() {
+export default async function Home() {
+  const posts = await db.post.findMany({});
+
   return (
     <div>
-      <PostCard />
+      <PostCard posts={posts} />
     </div>
   );
 }
