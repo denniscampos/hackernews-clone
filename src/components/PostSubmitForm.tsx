@@ -6,33 +6,30 @@ import { Textarea } from './ui/textarea';
 import { Prisma } from '@prisma/client';
 import { User } from 'next-auth';
 
-export async function PostSubmitForm({
-  user,
-}: {
-  user?: Pick<User, 'id' | 'email'>;
-}) {
-  async function postForm(data: FormData): Promise<any> {
+export async function PostSubmitForm({ user }: { user?: User }) {
+  async function postForm(data: FormData): Promise<void> {
     'use server';
 
     const { title, url, text } = Object.fromEntries(
       data
     ) as unknown as Prisma.PostCreateInput;
 
-    //TODO: may not work well do do this type of connect with use server.
+    const userTest = await db.user.findFirst({
+      where: {
+        email: user?.email,
+      },
+    });
 
     await db.post.create({
       data: {
         title,
         url,
         text,
-        author: {
-          connect: {
-            id: user?.id,
-          },
-        },
+        authorId: userTest?.id as string,
       },
     });
   }
+
   return (
     <div className="p-4">
       <form action={postForm}>
