@@ -19,7 +19,14 @@ export async function Navbar({ items }: NavbarProps) {
   return (
     <nav className="flex justify-between text-xs bg-[#FF6600]">
       <div className="flex items-center">
-        <h1 className="font-bold p-2">Hacker News</h1>
+        <Link href="/">
+          <Button
+            variant="ghost"
+            className="font-bold p-2 hover:bg-transparent"
+          >
+            Hacker News
+          </Button>
+        </Link>
         {items?.map(
           (item, index) =>
             item.href && (

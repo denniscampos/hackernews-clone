@@ -1,11 +1,12 @@
 import Link from 'next/link';
 import { Button } from './ui/button';
 import { Post } from '@prisma/client';
+import { getTimeSincePostCreation } from '@/lib/utils';
 
 export function PostCard({
   posts,
 }: {
-  posts: Pick<Post, 'title' | 'url' | 'text'>[];
+  posts: Pick<Post, 'id' | 'createdAt' | 'title' | 'text' | 'url'>[];
 }) {
   return (
     <div className="p-2">
@@ -28,7 +29,9 @@ export function PostCard({
           </div>
           <div className="leading-[0px]">
             <span className="text-xs text-[#828282]">
-              92 points by Narla 2 hours ago | 98 comments
+              92 points by Narla{' '}
+              <span>{getTimeSincePostCreation(post.createdAt)}</span> | 98
+              comments
             </span>
           </div>
         </div>
