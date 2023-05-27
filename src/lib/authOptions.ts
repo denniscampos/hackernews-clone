@@ -14,15 +14,22 @@ declare module 'next-auth' {
   interface Session extends DefaultSession {
     user: {
       id: string;
+      username: string;
+      about: string;
+      // email: string;
       // ...other properties
       // role: UserRole;
     } & DefaultSession['user'];
   }
 
-  // interface User {
-  //   // ...other properties
-  //   // role: UserRole;
-  // }
+  interface User {
+    id: string;
+    username: string;
+    about: string;
+    // email: string;
+    // ...other properties
+    // role: UserRole;
+  }
 }
 
 /**
@@ -33,6 +40,23 @@ declare module 'next-auth' {
 
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(db),
+  callbacks: {
+    async session({ session, token, user }) {
+      const dbUser = await db.user.findUnique({
+        where: { id: user.id },
+      });
+
+      if (!dbUser) {
+        throw new Error('User not found');
+      }
+
+      session.user.id = user.id;
+      session.user.username = dbUser.username ?? '';
+      session.user.email = user.email;
+      session.user.about = dbUser.about ?? '';
+      return session;
+    },
+  },
   providers: [
     GithubProvider({
       clientId: env.GITHUB_CLIENT_ID,

@@ -40,7 +40,11 @@ export async function Navbar({ items }: NavbarProps) {
       </div>
 
       <div>
-        <span>{firstName}</span>
+        <Link href="/account">
+          <Button className="hover:bg-transparent p-0" variant="ghost">
+            {firstName}
+          </Button>
+        </Link>
         <SignIn user={user} />
       </div>
     </nav>
