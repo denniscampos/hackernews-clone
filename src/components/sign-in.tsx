@@ -27,7 +27,7 @@ export function SignIn({
         <Button
           variant="link"
           onClick={() => {
-            signIn();
+            signIn('github');
             router.refresh();
           }}
         >

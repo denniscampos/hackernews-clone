@@ -39,7 +39,7 @@ export async function Navbar({ items }: NavbarProps) {
         )}
       </div>
 
-      <div>
+      <div className="flex">
         <Link href="/account">
           <Button className="hover:bg-transparent p-0" variant="ghost">
             {firstName}
