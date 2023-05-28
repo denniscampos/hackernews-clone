@@ -3,15 +3,12 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { AccountFormRequest } from '@/lib/validator';
 import { User } from 'next-auth';
 import { useForm } from 'react-hook-form';
 
 export function AccountForm({ user }: { user?: User | null }) {
-  const { register, handleSubmit } = useForm<{
-    email: string;
-    username: string;
-    about: string;
-  }>({
+  const { register, handleSubmit } = useForm<AccountFormRequest>({
     defaultValues: {
       username: user?.username ?? '',
       email: user?.email ?? '',
