@@ -1,7 +1,10 @@
+'use client';
+
 import Link from 'next/link';
 import { Button } from './ui/button';
-import { getCurrentUser } from '@/lib/session';
 import { SignIn } from './sign-in';
+import { User } from 'next-auth';
+import { usePathname } from 'next/navigation';
 
 type NavbarProps = {
   items?: {
@@ -10,11 +13,16 @@ type NavbarProps = {
     external?: boolean;
     disabled?: boolean;
   }[];
+  user?: User | null;
 };
 
-export async function Navbar({ items }: NavbarProps) {
-  const user = await getCurrentUser();
+export function Navbar({ items, user }: NavbarProps) {
   const firstName = user?.name?.split(' ')[0];
+  const pathname = usePathname();
+
+  if (pathname === '/login') {
+    return <></>;
+  }
 
   return (
     <nav className="flex justify-between text-xs bg-[#FF6600]">

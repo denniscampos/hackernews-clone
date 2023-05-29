@@ -2,14 +2,11 @@
 
 import { User } from 'next-auth';
 import { Button } from './ui/button';
-import { signIn, signOut } from 'next-auth/react';
+import { signOut } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
-export function SignIn({
-  user,
-}: {
-  user?: Pick<User, 'name' | 'email' | 'image'>;
-}) {
+export function SignIn({ user }: { user?: User | null }) {
   const router = useRouter();
   return (
     <>
@@ -24,15 +21,9 @@ export function SignIn({
           logout
         </Button>
       ) : (
-        <Button
-          variant="link"
-          onClick={() => {
-            signIn('github');
-            router.refresh();
-          }}
-        >
-          login
-        </Button>
+        <Link href="/login">
+          <Button variant="link">login</Button>
+        </Link>
       )}
     </>
   );
