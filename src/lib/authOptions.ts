@@ -1,5 +1,6 @@
 import { DefaultSession, NextAuthOptions } from 'next-auth';
 import GithubProvider from 'next-auth/providers/github';
+import CredentialsProvider from 'next-auth/providers/credentials';
 import { env } from '@/env.mjs';
 import { PrismaAdapter } from '@next-auth/prisma-adapter';
 import { db } from '@/lib/db';
@@ -43,20 +44,35 @@ export const authOptions: NextAuthOptions = {
   pages: {
     signIn: '/login',
   },
+  session: {
+    strategy: 'jwt',
+  },
   callbacks: {
-    async session({ session, token, user }) {
+    async jwt({ token }) {
       const dbUser = await db.user.findUnique({
-        where: { id: user.id },
+        where: { id: token.sub },
       });
 
       if (!dbUser) {
         throw new Error('User not found');
       }
 
+      token.token = dbUser;
+      return token;
+    },
+    async session({ session, token, user }) {
+      const dbUser = await db.user.findUnique({
+        where: { id: user.id },
+      });
+
+      // if (!dbUser) {
+      //   throw new Error('User not found');
+      // }
+
       session.user.id = user.id;
-      session.user.username = dbUser.username ?? '';
+      session.user.username = user.username ?? '';
       session.user.email = user.email;
-      session.user.about = dbUser.about ?? '';
+      session.user.about = user.about ?? '';
       return session;
     },
   },
@@ -64,6 +80,55 @@ export const authOptions: NextAuthOptions = {
     GithubProvider({
       clientId: env.GITHUB_CLIENT_ID,
       clientSecret: env.GITHUB_CLIENT_SECRET,
+    }),
+    CredentialsProvider({
+      // The name to display on the sign in form (e.g. 'Sign in with...')
+      name: 'Credentials',
+      // The credentials is used to generate a suitable form on the sign in page.
+      // You can specify whatever fields you are expecting to be submitted.
+      // e.g. domain, username, password, 2FA token, etc.
+      // You can pass any HTML attribute to the <input> tag through the object.
+      credentials: {
+        username: { label: 'username', type: 'text', placeholder: 'jsmith' },
+        password: { label: 'password', type: 'password' },
+        confirmPassword: { label: 'confirmPassword', type: 'password' },
+        signUp: { label: 'sign up', type: 'button' },
+      },
+      async authorize(credentials) {
+        if (!credentials) return null;
+
+        const user = await db.user.findUnique({
+          where: { username: credentials.username },
+        });
+
+        if (credentials.signUp === 'true') {
+          if (user) return null;
+
+          // if (credentials.password !== credentials.confirmPassword) {
+          //   throw new Error('Passwords do not match. Try again!');
+          // }
+
+          // const hashedPassword = hashPassword(credentials.password);
+
+          const createNewUser = await db.user.create({
+            data: {
+              username: credentials.username,
+              password: credentials.password,
+            },
+          });
+
+          return createNewUser;
+        } else {
+          if (user) {
+            return user;
+          } else {
+            // If you return null then an error will be displayed advising the user to check their details.
+            return null;
+          }
+
+          // You can also Reject this callback with an Error thus the user will be sent to the error page with the error message as a query parameter
+        }
+      },
     }),
   ],
 };
