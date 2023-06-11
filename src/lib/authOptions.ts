@@ -15,9 +15,9 @@ declare module 'next-auth' {
   interface Session extends DefaultSession {
     user: {
       id: string;
-      username: string;
       about: string;
-      // email: string;
+      email: string;
+      username: string;
       // ...other properties
       // role: UserRole;
     } & DefaultSession['user'];
@@ -25,9 +25,20 @@ declare module 'next-auth' {
 
   interface User {
     id: string;
-    username: string;
     about: string;
-    // email: string;
+    email: string;
+    username: string;
+    // ...other properties
+    // role: UserRole;
+  }
+}
+
+declare module 'next-auth/jwt' {
+  interface JWT {
+    id: string;
+    about: string;
+    email: string;
+    username: string;
     // ...other properties
     // role: UserRole;
   }
@@ -48,31 +59,21 @@ export const authOptions: NextAuthOptions = {
     strategy: 'jwt',
   },
   callbacks: {
-    async jwt({ token }) {
+    async jwt({ token, user }) {
       const dbUser = await db.user.findUnique({
         where: { id: token.sub },
       });
 
-      if (!dbUser) {
-        throw new Error('User not found');
-      }
+      if (!dbUser) return token;
 
       token.token = dbUser;
+
       return token;
     },
-    async session({ session, token, user }) {
-      const dbUser = await db.user.findUnique({
-        where: { id: user.id },
-      });
-
-      // if (!dbUser) {
-      //   throw new Error('User not found');
-      // }
-
-      session.user.id = user.id;
-      session.user.username = user.username ?? '';
-      session.user.email = user.email;
-      session.user.about = user.about ?? '';
+    async session({ session, token }) {
+      session.user.id = token.sub ?? '';
+      session.user.username = token.username;
+      session.user.email = token.email;
       return session;
     },
   },
