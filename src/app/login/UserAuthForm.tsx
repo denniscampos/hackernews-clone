@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
+import { UserLogin } from './UserLogin';
 
 type SignUpProps = {
   username: string;
@@ -49,7 +50,9 @@ export function UserAuthForm() {
 
   return (
     <div className="flex flex-col justify-center items-center w-full h-full">
-      <h1>Create an account</h1>
+      <span className="font-bold">Login</span>
+      <UserLogin />
+      <span className="font-bold">Create Account</span>
       {/* @ts-expect-error */}
       <form onSubmit={handleSubmit(onSubmit)}>
         <Label htmlFor="username">Username</Label>

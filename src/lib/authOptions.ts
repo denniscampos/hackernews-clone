@@ -1,9 +1,19 @@
-import { DefaultSession, NextAuthOptions } from 'next-auth';
+import { DefaultSession, NextAuthOptions, User } from 'next-auth';
 import GithubProvider from 'next-auth/providers/github';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { env } from '@/env.mjs';
 import { PrismaAdapter } from '@next-auth/prisma-adapter';
 import { db } from '@/lib/db';
+import bcrypt from 'bcrypt';
+
+export async function hashPassword(password: string) {
+  const saltRounds = 10;
+  return bcrypt.hash(password, saltRounds);
+}
+
+export async function comparePassword(password: string, hash: string) {
+  return bcrypt.compare(password, hash);
+}
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -95,7 +105,8 @@ export const authOptions: NextAuthOptions = {
         confirmPassword: { label: 'confirmPassword', type: 'password' },
         signUp: { label: 'sign up', type: 'button' },
       },
-      async authorize(credentials) {
+      // Any because I would be force to turn off strict mode in tsconfig
+      async authorize(credentials): Promise<any> {
         if (!credentials) return null;
 
         const user = await db.user.findUnique({
@@ -105,22 +116,28 @@ export const authOptions: NextAuthOptions = {
         if (credentials.signUp === 'true') {
           if (user) return null;
 
-          // if (credentials.password !== credentials.confirmPassword) {
-          //   throw new Error('Passwords do not match. Try again!');
-          // }
+          if (credentials.password !== credentials.confirmPassword) {
+            throw new Error('Passwords do not match. Try again!');
+          }
 
-          // const hashedPassword = hashPassword(credentials.password);
+          const hashedPassword = await hashPassword(credentials.password);
 
           const createNewUser = await db.user.create({
             data: {
               username: credentials.username,
-              password: credentials.password,
+              password: hashedPassword,
             },
           });
 
           return createNewUser;
         } else {
-          if (user) {
+          if (user && user.password) {
+            const isValid = comparePassword(
+              credentials.password,
+              user.password
+            );
+            if (!isValid) return null;
+
             return user;
           } else {
             // If you return null then an error will be displayed advising the user to check their details.
