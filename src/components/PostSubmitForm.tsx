@@ -5,10 +5,10 @@ import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { Textarea } from './ui/textarea';
 import { useMutation } from '@tanstack/react-query';
-import { PostValidator } from '@/app/api/post/route';
 import { FormEvent, useState } from 'react';
 import axios, { AxiosError } from 'axios';
 import { useRouter } from 'next/navigation';
+import { PostValidator } from '@/lib/validator';
 
 export function PostSubmitForm() {
   const router = useRouter();

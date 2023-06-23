@@ -1,21 +1,14 @@
 import { db } from '@/lib/db';
 import { getCurrentUser } from '@/lib/session';
+import { postValidatorSchema } from '@/lib/validator';
 import { z } from 'zod';
-
-export const PostValidatorSchema = z.object({
-  title: z.string(),
-  url: z.string().url(),
-  text: z.string(),
-});
-
-export type PostValidator = z.infer<typeof PostValidatorSchema>;
 
 export async function POST(req: Request) {
   const session = await getCurrentUser();
   try {
     const body = await req.json();
     console.log({ body });
-    const { title, url, text } = PostValidatorSchema.parse(body);
+    const { title, url, text } = postValidatorSchema.parse(body);
 
     if (!session) return;
 

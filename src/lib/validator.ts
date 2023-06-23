@@ -7,3 +7,11 @@ export const accountValidatorSchema = z.object({
 });
 
 export type AccountFormRequest = z.infer<typeof accountValidatorSchema>;
+
+export const postValidatorSchema = z.object({
+  title: z.string(),
+  url: z.string().url(),
+  text: z.string(),
+});
+
+export type PostValidator = z.infer<typeof postValidatorSchema>;
