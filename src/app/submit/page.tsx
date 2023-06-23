@@ -12,8 +12,7 @@ export default async function Submit() {
 
   return (
     <>
-      {/* @ts-expect-error Async Server Component */}
-      <PostSubmitForm user={user} />
+      <PostSubmitForm />
     </>
   );
 }

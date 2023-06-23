@@ -3,6 +3,7 @@ import './globals.css';
 import { Inter } from 'next/font/google';
 import { navItems } from '@/config/nav-items';
 import { getCurrentUser } from '@/lib/session';
+import Providers from '@/components/Providers';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -21,7 +22,7 @@ export default async function RootLayout({
     <html lang="en">
       <body className={`max-w-6xl mx-auto my-0 ${inter.className}`}>
         <Navbar items={navItems} user={user} />
-        {children}
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

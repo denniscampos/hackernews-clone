@@ -1,56 +1,103 @@
-import { db } from '@/lib/db';
+'use client';
+
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { Textarea } from './ui/textarea';
-import { Prisma } from '@prisma/client';
-import { User } from 'next-auth';
-import { redirect } from 'next/navigation';
+import { useMutation } from '@tanstack/react-query';
+import { PostValidator } from '@/app/api/post/route';
+import { FormEvent, useState } from 'react';
+import axios, { AxiosError } from 'axios';
+import { useRouter } from 'next/navigation';
 
-export async function PostSubmitForm({ user }: { user?: User }) {
-  async function postForm(data: FormData): Promise<void> {
-    'use server';
-
-    const { title, url, text } = Object.fromEntries(
-      data
-    ) as unknown as Prisma.PostCreateInput;
-
-    const userTest = await db.user.findFirst({
-      where: {
-        email: user?.email,
-      },
-    });
-
-    await db.post.create({
-      data: {
+export function PostSubmitForm() {
+  const router = useRouter();
+  const [post, setPost] = useState({
+    title: '',
+    url: '',
+    text: '',
+  });
+  const postMutation = useMutation({
+    mutationFn: async () => {
+      const { title, url, text } = post;
+      const payload: PostValidator = {
         title,
         url,
         text,
-        authorId: userTest?.id as string,
-      },
-    });
+      };
 
-    redirect('/');
-  }
+      const { data } = await axios.post('/api/post', payload);
+
+      return data;
+    },
+    onSuccess: () => {
+      router.refresh();
+    },
+    onError: (error) => {
+      if (error instanceof AxiosError) {
+        console.log({ error });
+        if (error.response?.status === 400) {
+          alert(error.response.data[0].message);
+        }
+      }
+    },
+  });
+
+  const submitPost = async (e: FormEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    postMutation.mutate();
+  };
 
   return (
     <div className="p-4">
-      <form action={postForm}>
+      <form>
         <div className="flex items-center">
           <Label className="pr-2">title</Label>
-          <Input id="title" name="title" />
+          <Input
+            onChange={(e) => {
+              const { value } = e.target;
+              setPost((prev) => ({
+                ...prev,
+                title: value,
+              }));
+            }}
+            id="title"
+            name="title"
+          />
         </div>
 
         <div className="flex items-center">
           <Label className="pr-2">url</Label>
-          <Input id="url" name="url" />
+          <Input
+            onChange={(e) => {
+              const { value } = e.target;
+              setPost((prev) => ({
+                ...prev,
+                url: value,
+              }));
+            }}
+            id="url"
+            name="url"
+          />
         </div>
 
         <div className="flex items-center">
           <Label className="pr-2">text</Label>
-          <Textarea id="text" name="text" />
+          <Textarea
+            onChange={(e) => {
+              const { value } = e.target;
+              setPost((prev) => ({
+                ...prev,
+                text: value,
+              }));
+            }}
+            id="text"
+            name="text"
+          />
         </div>
-        <Button type="submit">submit</Button>
+        <Button onClick={submitPost} type="submit">
+          submit
+        </Button>
       </form>
     </div>
   );
