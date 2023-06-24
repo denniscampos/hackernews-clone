@@ -7,7 +7,6 @@ export async function POST(req: Request) {
   const session = await getCurrentUser();
   try {
     const body = await req.json();
-    console.log({ body });
     const { title, url, text } = postValidatorSchema.parse(body);
 
     if (!session) return;
@@ -23,6 +22,7 @@ export async function POST(req: Request) {
 
     return new Response(JSON.stringify(post), { status: 201 });
   } catch (e) {
+    console.log({ e });
     if (e instanceof z.ZodError) {
       return new Response(e.message, { status: 400 });
     }

@@ -5,22 +5,32 @@ import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { Textarea } from './ui/textarea';
 import { useMutation } from '@tanstack/react-query';
-import { FormEvent, useState } from 'react';
 import axios, { AxiosError } from 'axios';
 import { useRouter } from 'next/navigation';
-import { PostValidator } from '@/lib/validator';
+import { postValidatorSchema } from '@/lib/validator';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+
+type FormData = z.infer<typeof postValidatorSchema>;
 
 export function PostSubmitForm() {
   const router = useRouter();
-  const [post, setPost] = useState({
-    title: '',
-    url: '',
-    text: '',
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormData>({
+    defaultValues: {
+      title: '',
+      url: '',
+      text: '',
+    },
+    resolver: zodResolver(postValidatorSchema),
   });
   const postMutation = useMutation({
-    mutationFn: async () => {
-      const { title, url, text } = post;
-      const payload: PostValidator = {
+    mutationFn: async ({ text, title, url }: FormData) => {
+      const payload: FormData = {
         title,
         url,
         text,
@@ -31,9 +41,13 @@ export function PostSubmitForm() {
       return data;
     },
     onSuccess: () => {
+      alert('success');
       router.refresh();
     },
     onError: (error) => {
+      // TODO:
+      // Since we are using zod to validate the form, we can't get the error message from the server.
+      // Error should potentially be different, maybe 500?
       if (error instanceof AxiosError) {
         console.log({ error });
         if (error.response?.status === 400) {
@@ -43,61 +57,25 @@ export function PostSubmitForm() {
     },
   });
 
-  const submitPost = async (e: FormEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    postMutation.mutate();
-  };
-
   return (
     <div className="p-4">
-      <form>
+      <form onSubmit={handleSubmit((data) => postMutation.mutate(data))}>
         <div className="flex items-center">
           <Label className="pr-2">title</Label>
-          <Input
-            onChange={(e) => {
-              const { value } = e.target;
-              setPost((prev) => ({
-                ...prev,
-                title: value,
-              }));
-            }}
-            id="title"
-            name="title"
-          />
+          <Input {...register('title')} id="title" name="title" />
         </div>
 
         <div className="flex items-center">
           <Label className="pr-2">url</Label>
-          <Input
-            onChange={(e) => {
-              const { value } = e.target;
-              setPost((prev) => ({
-                ...prev,
-                url: value,
-              }));
-            }}
-            id="url"
-            name="url"
-          />
+          <Input {...register('url')} id="url" name="url" />
+          {errors.url && <p className="text-red-500">{errors.url.message}</p>}
         </div>
 
         <div className="flex items-center">
           <Label className="pr-2">text</Label>
-          <Textarea
-            onChange={(e) => {
-              const { value } = e.target;
-              setPost((prev) => ({
-                ...prev,
-                text: value,
-              }));
-            }}
-            id="text"
-            name="text"
-          />
+          <Textarea {...register('text')} id="text" name="text" />
         </div>
-        <Button onClick={submitPost} type="submit">
-          submit
-        </Button>
+        <Button>submit</Button>
       </form>
     </div>
   );
