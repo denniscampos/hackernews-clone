@@ -17,7 +17,7 @@ type NavbarProps = {
 };
 
 export function Navbar({ items, user }: NavbarProps) {
-  const firstName = user?.name?.split(' ')[0];
+  const userName = user?.username;
   const pathname = usePathname();
 
   if (pathname === '/login') {
@@ -50,7 +50,7 @@ export function Navbar({ items, user }: NavbarProps) {
       <div className="flex">
         <Link href="/account">
           <Button className="hover:bg-transparent p-0" variant="ghost">
-            {firstName}
+            {!user ? null : userName ? userName : 'Account'}
           </Button>
         </Link>
         <SignIn user={user} />

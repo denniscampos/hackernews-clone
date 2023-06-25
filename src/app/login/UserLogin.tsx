@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { signIn } from 'next-auth/react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 type SignInProps = {
@@ -12,9 +13,11 @@ type SignInProps = {
 };
 
 export function UserLogin() {
+  const [isLoading, setIsLoading] = useState(false);
   const { register, handleSubmit } = useForm<SignInProps>();
 
   const onSubmit = async ({ username, password }: SignInProps) => {
+    setIsLoading(true);
     const payload = {
       username,
       password,
@@ -25,6 +28,7 @@ export function UserLogin() {
       ...payload,
     });
 
+    setIsLoading(false);
     return response;
   };
   return (
@@ -33,7 +37,9 @@ export function UserLogin() {
       <Input {...register('username')} type="text" />
       <Label htmlFor="password">password</Label>
       <Input {...register('password')} type="password" />
-      <Button type="submit">Sign in</Button>
+      <Button disabled={isLoading} type="submit">
+        Sign in
+      </Button>
     </form>
   );
 }

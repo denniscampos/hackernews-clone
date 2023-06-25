@@ -36,7 +36,7 @@ export function PostSubmitForm() {
         text,
       };
 
-      const { data } = await axios.post('/api/post', payload);
+      const { data } = await axios.post('/api/post/create', payload);
 
       return data;
     },

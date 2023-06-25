@@ -8,6 +8,7 @@ import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { UserLogin } from './UserLogin';
+import { useState } from 'react';
 
 type SignUpProps = {
   username: string;
@@ -16,35 +17,42 @@ type SignUpProps = {
 };
 
 export function UserAuthForm() {
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const { register, handleSubmit } = useForm();
 
   const onSubmit = async (data: SignUpProps) => {
-    const { username, password, confirmPassword } = data;
-    const payload = {
-      username,
-      password,
-      confirmPassword,
-      signUp: true,
-    };
+    setIsLoading(true);
+    try {
+      const { username, password, confirmPassword } = data;
+      const payload = {
+        username,
+        password,
+        confirmPassword,
+        signUp: true,
+      };
 
-    const res = await signIn('credentials', {
-      redirect: false,
-      ...payload,
-    });
+      const res = await signIn('credentials', {
+        redirect: false,
+        ...payload,
+      });
 
-    if (res) {
-      const { error, ok } = res;
+      if (res) {
+        const { error, ok } = res;
 
-      if (error) {
-        throw new Error('something went wrong.');
+        if (error) {
+          throw new Error('something went wrong.');
+        }
+
+        if (ok) {
+          console.log('success');
+          router.push('/');
+        }
       }
-
-      if (ok) {
-        console.log('success');
-        router.push('/');
-      }
-      return;
+    } catch (e) {
+      console.log('something went wrong', e);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -78,7 +86,9 @@ export function UserAuthForm() {
           name="confirmPassword"
           type="password"
         />
-        <Button className="mb-10">Sign up</Button>
+        <Button disabled={isLoading} className="mb-10">
+          Sign up
+        </Button>
       </form>
 
       <div className="relative">
@@ -94,6 +104,7 @@ export function UserAuthForm() {
 
       <div>
         <Button
+          disabled={isLoading}
           className="w-full"
           onClick={() => signIn('github', { callbackUrl: '/' })}
         >

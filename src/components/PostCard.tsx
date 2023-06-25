@@ -1,13 +1,27 @@
 import Link from 'next/link';
 import { Button } from './ui/button';
-import { Post } from '@prisma/client';
+import { Post, Prisma } from '@prisma/client';
 import { getTimeSincePostCreation } from '@/lib/utils';
+import { AxiosResponse } from 'axios';
 
-export function PostCard({
-  posts,
-}: {
-  posts: Pick<Post, 'id' | 'createdAt' | 'title' | 'text' | 'url'>[];
-}) {
+const postSelect = Prisma.validator<Prisma.PostArgs>()({
+  select: {
+    id: true,
+    createdAt: true,
+    title: true,
+    url: true,
+    text: true,
+    author: {
+      select: {
+        username: true,
+      },
+    },
+  },
+});
+
+type PostCardPayload = Prisma.PostGetPayload<typeof postSelect>;
+
+export function PostCard({ posts }: { posts: PostCardPayload[] }) {
   return (
     <div className="p-2">
       {posts.map((post) => (
@@ -29,7 +43,7 @@ export function PostCard({
           </div>
           <div className="leading-[0px]">
             <span className="text-xs text-[#828282]">
-              92 points by Narla{' '}
+              92 points by {post.author.username}{' '}
               <span>{getTimeSincePostCreation(post.createdAt)}</span> | 98
               comments
             </span>
