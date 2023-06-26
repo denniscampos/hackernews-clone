@@ -1,23 +1,8 @@
 import Link from 'next/link';
 import { Button } from './ui/button';
-import { Post, Prisma } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 import { getTimeSincePostCreation } from '@/lib/utils';
-import { AxiosResponse } from 'axios';
-
-const postSelect = Prisma.validator<Prisma.PostArgs>()({
-  select: {
-    id: true,
-    createdAt: true,
-    title: true,
-    url: true,
-    text: true,
-    author: {
-      select: {
-        username: true,
-      },
-    },
-  },
-});
+import { postSelect } from '@/lib/prisma/validator';
 
 type PostCardPayload = Prisma.PostGetPayload<typeof postSelect>;
 

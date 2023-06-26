@@ -1,6 +1,5 @@
 import { db } from '@/lib/db';
 import { postSelect } from '@/lib/prisma/validator';
-import { NextResponse } from 'next/server';
 
 export async function GET() {
   try {
@@ -8,7 +7,6 @@ export async function GET() {
       orderBy: { createdAt: 'desc' },
       ...postSelect,
     });
-
     return new Response(JSON.stringify(posts), { status: 200 });
   } catch (error) {
     if (error instanceof Error) {

@@ -42,7 +42,6 @@ export function PostSubmitForm() {
     },
     onSuccess: () => {
       alert('success');
-      router.refresh();
     },
     onError: (error) => {
       // TODO:
