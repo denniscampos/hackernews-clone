@@ -1,7 +1,6 @@
 import { db } from '@/lib/db';
 import { getCurrentUser } from '@/lib/session';
 import { postValidatorSchema } from '@/lib/validator';
-import { revalidateTag } from 'next/cache';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
@@ -22,7 +21,6 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    revalidateTag('posts');
     return NextResponse.json({ post, revalidated: true, now: Date.now() });
   } catch (e) {
     console.log({ e });

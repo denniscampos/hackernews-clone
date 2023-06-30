@@ -51,6 +51,7 @@ model User {
   post          Post[]
   hidePost      HidePost[]
   comment       Comment[]
+  upvote        Upvote[]
 }
 
 model VerificationToken {
@@ -62,17 +63,19 @@ model VerificationToken {
 }
 
 model Post {
-  id        String     @id @default(cuid())
-  title     String
-  authorId  String
-  points    Int?       @default(0)
-  url       String?
-  text      String?
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
-  author    User       @relation(fields: [authorId], references: [id])
-  comment   Comment[]
-  HidePost  HidePost[]
+  id          String     @id @default(cuid())
+  title       String
+  authorId    String
+  points      Int?       @default(0)
+  url         String?
+  text        String?
+  upvoteCount Int?       @default(0)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  author      User       @relation(fields: [authorId], references: [id])
+  comment     Comment[]
+  HidePost    HidePost[]
+  upvote      Upvote[]
 
   @@index([authorId])
 }
@@ -102,6 +105,21 @@ model HidePost {
   post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
   user      User     @relation(fields: [userId], references: [id])
 
+  @@index([postId])
+  @@index([userId])
+}
+
+model Upvote {
+  id        String   @id @default(cuid())
+  postId    String
+  userId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id])
+
+  // Add unique constraint to ensure one vote per user per post
+  @@unique([postId, userId])
   @@index([postId])
   @@index([userId])
 }

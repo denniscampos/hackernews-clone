@@ -15,3 +15,9 @@ export const postValidatorSchema = z.object({
 });
 
 export type PostValidator = z.infer<typeof postValidatorSchema>;
+
+export const upvoteSchema = z.object({
+  postId: z.string(),
+});
+
+export type UpvoteSchema = z.infer<typeof upvoteSchema>;
