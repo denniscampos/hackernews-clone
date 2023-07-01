@@ -55,13 +55,12 @@ export async function POST(req: NextRequest) {
             upvote: true,
           },
         });
+        await db.upvote.delete({
+          where: {
+            id: existingUpvote?.id,
+          },
+        });
       }
-
-      await db.upvote.delete({
-        where: {
-          id: existingUpvote?.id,
-        },
-      });
     }
 
     return new NextResponse('Success', {

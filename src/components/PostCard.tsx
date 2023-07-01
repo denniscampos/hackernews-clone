@@ -20,6 +20,9 @@ export type PostCardProps = {
     id: string;
     username: string | null;
   };
+  upvote: {
+    userId: string;
+  }[];
 }[];
 
 // type PostCardPayload = Prisma.PostGetPayload<typeof postSelect>;
@@ -92,7 +95,7 @@ export function PostCard({
         <div key={post.id} className="flex">
           <span className="mr-1 text-sm">{index + 1}.</span>
           <div>
-            {post.upvoteCount && post.author.id === user?.id ? null : (
+            {post.upvote.find((upvote) => upvote.userId === user?.id) ? null : (
               <button onClick={() => handleVote({ postId: post.id })}>
                 <div className="w-0 h-0 mr-1 border-l-[5px] border-l-transparent border-b-[10px] border-b-gray-500 border-r-[5px] border-r-transparent"></div>
               </button>
@@ -121,7 +124,8 @@ export function PostCard({
               <span className="text-xs text-[#828282]">
                 {post.upvoteCount} points by {post.author.username}{' '}
                 <span>{getTimeSincePostCreation(post.createdAt)}</span>
-                {post.upvoteCount && post.author.id === user?.id ? (
+                {post.upvoteCount &&
+                post.upvote.find((upvote) => upvote.userId === user?.id) ? (
                   <>
                     |{' '}
                     <button
