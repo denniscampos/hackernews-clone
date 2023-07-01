@@ -13,8 +13,10 @@ export async function GET() {
       return {
         ...post,
         upvoteCount: _count.upvote,
+        commentCount: _count.comment,
       };
     });
+
     return NextResponse.json(postsWithUpvoteCount, { status: 200 });
   } catch (error) {
     if (error instanceof Error) {

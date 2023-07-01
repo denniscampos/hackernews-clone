@@ -16,6 +16,7 @@ export const postSelect = Prisma.validator<Prisma.PostArgs>()({
     _count: {
       select: {
         upvote: true,
+        comment: true,
       },
     },
     upvote: true,

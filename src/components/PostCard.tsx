@@ -10,12 +10,13 @@ import { useRouter } from 'next/navigation';
 import { User } from 'next-auth';
 
 export type PostCardProps = {
-  upvoteCount: number;
   id: string;
   title: string;
   url: string | null;
   text: string | null;
   createdAt: Date;
+  upvoteCount: number;
+  commentCount: number;
   author: {
     id: string;
     username: string | null;
@@ -135,7 +136,10 @@ export function PostCard({
                     </button>
                   </>
                 ) : null}
-                | 98 comments
+                |{' '}
+                <Link className="hover:underline" href={`/post/${post.id}`}>
+                  {post.commentCount} comments
+                </Link>
               </span>
             </div>
           </div>

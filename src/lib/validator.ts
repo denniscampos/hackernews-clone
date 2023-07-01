@@ -21,3 +21,10 @@ export const upvoteSchema = z.object({
 });
 
 export type UpvoteSchema = z.infer<typeof upvoteSchema>;
+
+export const commentSchema = z.object({
+  postId: z.string(),
+  content: z.string(),
+});
+
+export type CommentSchema = z.infer<typeof commentSchema>;

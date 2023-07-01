@@ -2,6 +2,8 @@ import { PostCard, PostCardProps } from '@/components/PostCard';
 import { env } from '@/env.mjs';
 import { getCurrentUser } from '@/lib/session';
 
+export const revalidate = 0;
+
 async function getPosts() {
   const res = await fetch(`${env.BASE_URL}/api/posts`, {
     cache: 'no-store',

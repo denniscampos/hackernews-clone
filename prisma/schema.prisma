@@ -66,7 +66,6 @@ model Post {
   id          String     @id @default(cuid())
   title       String
   authorId    String
-  points      Int?       @default(0)
   url         String?
   text        String?
   upvoteCount Int?       @default(0)
@@ -81,18 +80,21 @@ model Post {
 }
 
 model Comment {
-  id        String   @id @default(cuid())
+  id        String    @id @default(cuid())
   content   String
   postId    String
   userId    String
-  vote      Int      @unique @default(0)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
-  user      User     @relation(fields: [userId], references: [id])
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  post      Post      @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user      User      @relation(fields: [userId], references: [id])
+  parent    Comment?  @relation("ChildComments", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  children  Comment[] @relation("ChildComments")
+  parentId  String?
 
   @@index([userId])
   @@index([postId])
+  @@index([parentId])
 }
 
 model HidePost {
