@@ -1,6 +1,7 @@
 import { db } from '@/lib/db';
 import { getCurrentUser } from '@/lib/session';
 import { upvoteSchema } from '@/lib/validator';
+import { revalidatePath } from 'next/cache';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
@@ -60,7 +61,9 @@ export async function POST(req: NextRequest) {
       }),
     ]);
 
-    return new Response('OK');
+    revalidatePath('/');
+    // return new Response('OK');
+    return NextResponse.json({ revalidated: true, now: new Date() });
   } catch (e) {
     if (e instanceof z.ZodError) {
       return new NextResponse(e.message, { status: 400 });

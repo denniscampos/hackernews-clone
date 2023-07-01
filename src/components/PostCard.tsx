@@ -7,6 +7,7 @@ import { useMutation } from '@tanstack/react-query';
 import axios, { AxiosError } from 'axios';
 import { type UpvoteSchema } from '@/lib/validator';
 import { useRouter } from 'next/navigation';
+import { User } from 'next-auth';
 
 export type PostCardProps = {
   upvoteCount: number;
@@ -16,13 +17,20 @@ export type PostCardProps = {
   text: string | null;
   createdAt: Date;
   author: {
+    id: string;
     username: string | null;
   };
 }[];
 
 // type PostCardPayload = Prisma.PostGetPayload<typeof postSelect>;
 
-export function PostCard({ posts }: { posts: PostCardProps }) {
+export function PostCard({
+  posts,
+  user,
+}: {
+  posts: PostCardProps;
+  user?: User | null;
+}) {
   const router = useRouter();
   const upvoteMutation = useMutation({
     mutationKey: ['upvote'],
@@ -34,7 +42,7 @@ export function PostCard({ posts }: { posts: PostCardProps }) {
       return data;
     },
     onSuccess: () => {
-      alert('upvoted');
+      router.refresh();
     },
     onError: (error) => {
       if (error instanceof AxiosError) {
@@ -53,19 +61,42 @@ export function PostCard({ posts }: { posts: PostCardProps }) {
     },
   });
 
+  const unvoteMutation = useMutation({
+    mutationKey: ['unvote'],
+    mutationFn: async (postId: UpvoteSchema) => {
+      const payload = {
+        postId,
+      };
+      const { data } = await axios.post('/api/post/unvote', payload.postId);
+      return data;
+    },
+    onSuccess: () => {
+      router.refresh();
+    },
+    onError: (error) => {
+      if (error instanceof AxiosError) {
+        if (error.response?.status === 500) {
+          alert('Something went wrong');
+        }
+      }
+    },
+  });
+
   const handleVote = ({ postId }: UpvoteSchema) => {
     upvoteMutation.mutate({ postId });
-    router.refresh();
   };
 
   return (
     <div className="p-2">
-      {posts.map((post) => (
+      {posts.map((post, index) => (
         <div key={post.id} className="flex">
+          <span className="mr-1 text-sm">{index + 1}.</span>
           <div>
-            <button onClick={() => handleVote({ postId: post.id })}>
-              <div className="w-0 h-0 mr-1 border-l-[5px] border-l-transparent border-b-[10px] border-b-gray-500 border-r-[5px] border-r-transparent"></div>
-            </button>
+            {post.upvoteCount && post.author.id === user?.id ? null : (
+              <button onClick={() => handleVote({ postId: post.id })}>
+                <div className="w-0 h-0 mr-1 border-l-[5px] border-l-transparent border-b-[10px] border-b-gray-500 border-r-[5px] border-r-transparent"></div>
+              </button>
+            )}
           </div>
           <div className="mb-2">
             <div className="flex items-center">
@@ -89,8 +120,18 @@ export function PostCard({ posts }: { posts: PostCardProps }) {
             <div className="leading-[0px]">
               <span className="text-xs text-[#828282]">
                 {post.upvoteCount} points by {post.author.username}{' '}
-                <span>{getTimeSincePostCreation(post.createdAt)}</span> | 98
-                comments
+                <span>{getTimeSincePostCreation(post.createdAt)}</span>
+                {post.upvoteCount && post.author.id === user?.id ? (
+                  <>
+                    |{' '}
+                    <button
+                      onClick={() => unvoteMutation.mutate({ postId: post.id })}
+                    >
+                      unvote
+                    </button>
+                  </>
+                ) : null}
+                | 98 comments
               </span>
             </div>
           </div>

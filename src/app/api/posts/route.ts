@@ -1,5 +1,6 @@
 import { db } from '@/lib/db';
 import { postSelect } from '@/lib/prisma/validator';
+import { NextResponse } from 'next/server';
 
 export async function GET() {
   try {
@@ -14,7 +15,7 @@ export async function GET() {
         upvoteCount: _count.upvote,
       };
     });
-    return new Response(JSON.stringify(postsWithUpvoteCount), { status: 200 });
+    return NextResponse.json(postsWithUpvoteCount, { status: 200 });
   } catch (error) {
     if (error instanceof Error) {
       return new Response(error.message, { status: 500 });

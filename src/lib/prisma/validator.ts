@@ -9,6 +9,7 @@ export const postSelect = Prisma.validator<Prisma.PostArgs>()({
     text: true,
     author: {
       select: {
+        id: true,
         username: true,
       },
     },

@@ -1,9 +1,10 @@
 import { PostCard, PostCardProps } from '@/components/PostCard';
 import { env } from '@/env.mjs';
+import { getCurrentUser } from '@/lib/session';
 
 async function getPosts() {
   const res = await fetch(`${env.BASE_URL}/api/posts`, {
-    next: { revalidate: 0 },
+    cache: 'no-store',
   });
 
   if (!res.ok) {
@@ -16,10 +17,11 @@ async function getPosts() {
 }
 
 export default async function Home() {
+  const user = await getCurrentUser();
   const data = await getPosts();
   return (
     <div>
-      <PostCard posts={data} />
+      <PostCard posts={data} user={user} />
     </div>
   );
 }

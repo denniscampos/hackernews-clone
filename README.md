@@ -7,7 +7,7 @@ Using Next.js new app directory, TailwindCSS, Planetscale, Prisma, NextAuth.
 ## Features
 
 - [x] Auth
-- [ ] Upvoting and Downvoting
+- [x] Upvoting and Downvoting
 - [ ] Comments
 - [ ] Nesting Comments
-- [ ] Points system
+- [x] Points system
