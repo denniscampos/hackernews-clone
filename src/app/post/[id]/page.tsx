@@ -1,7 +1,7 @@
 import { getTimeSincePostCreation } from '@/lib/utils';
 import { CommentForm } from './CommentForm';
 import { env } from '@/env.mjs';
-import axios from 'axios';
+// import axios from 'axios';
 
 export const revalidate = 0;
 
@@ -29,13 +29,17 @@ export default async function Page({
   searchParams: { id: string };
 }) {
   const fetchPost = async () => {
-    const { data } = await axios.get(`${env.BASE_URL}/api/post`, {
-      params: {
-        id: searchParams.id,
-      },
-    });
-
+    const url = `${env.BASE_URL}/api/post?id=${searchParams.id}`;
+    const res = await fetch(url, { cache: 'no-store' });
+    const data = (await res.json()) as PostProps;
     return data;
+    // const { data } = await axios.get(`${env.BASE_URL}/api/post`, {
+    //   params: {
+    //     id: searchParams.id,
+    //   },
+    // });
+
+    // return data;
   };
   const post = (await fetchPost()) as PostProps;
   const comments = post.comment.map((comment) => comment);
