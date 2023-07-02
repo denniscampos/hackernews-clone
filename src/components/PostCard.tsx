@@ -125,8 +125,7 @@ export function PostCard({
               <span className="text-xs text-[#828282]">
                 {post.upvoteCount} points by {post.author.username}{' '}
                 <span>{getTimeSincePostCreation(post.createdAt)}</span>
-                {post.upvoteCount &&
-                post.upvote.find((upvote) => upvote.userId === user?.id) ? (
+                {post.upvote.find((upvote) => upvote.userId === user?.id) ? (
                   <>
                     |{' '}
                     <button

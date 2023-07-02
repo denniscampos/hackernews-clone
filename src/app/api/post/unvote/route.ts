@@ -16,10 +16,17 @@ export async function POST(req: NextRequest) {
       select: {
         authorId: true,
         upvoteCount: true,
+        upvote: {
+          select: {
+            userId: true,
+          },
+        },
       },
     });
 
-    if (userId !== post?.authorId) {
+    const isAuthor = post?.upvote.find((upvote) => upvote.userId === userId);
+
+    if (!isAuthor) {
       return new NextResponse('Not authorized', {
         status: 401,
         statusText: 'Only the user can unvote the current post',
