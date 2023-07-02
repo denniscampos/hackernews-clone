@@ -3,6 +3,9 @@ import { CommentForm } from './CommentForm';
 import { env } from '@/env.mjs';
 // import axios from 'axios';
 
+export const dynamic = 'force-dynamic';
+export const fetchCache = 'force-no-store';
+
 type PostProps = {
   id: string;
   title: string;
@@ -28,7 +31,12 @@ export default async function Page({
 }) {
   const fetchPost = async () => {
     const url = `${env.BASE_URL}/api/post/?id=${searchParams.id}`;
-    const res = await fetch(url, { cache: 'no-store' });
+    const res = await fetch(url);
+
+    if (!res.ok) {
+      throw new Error('Failed to fetch post');
+    }
+
     const data = (await res.json()) as PostProps;
     return data;
     // const { data } = await axios.get(`${env.BASE_URL}/api/post`, {
