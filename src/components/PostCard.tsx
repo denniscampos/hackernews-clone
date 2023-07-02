@@ -104,7 +104,7 @@ export function PostCard({
           </div>
           <div className="mb-2">
             <div className="flex items-center">
-              <Link href="/">
+              <Link href={post.url ?? '/'}>
                 <Button
                   className="hover:bg-transparent p-0 h-0"
                   variant="ghost"
@@ -112,7 +112,7 @@ export function PostCard({
                   {post.title}
                 </Button>
               </Link>
-              <Link href="/">
+              <Link href={post.url ?? '/'}>
                 <Button
                   className="text-xs text-[#828282] py-0 pl-2 h-0"
                   variant="link"
@@ -137,7 +137,10 @@ export function PostCard({
                   </>
                 ) : null}
                 |{' '}
-                <Link className="hover:underline" href={`/post/${post.id}`}>
+                <Link
+                  className="hover:underline"
+                  href={`/post/id?id=${post.id}`}
+                >
                   {post.commentCount} comments
                 </Link>
               </span>

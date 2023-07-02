@@ -9,13 +9,11 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 type CommentProps = {
-  comment: {
-    id: string;
-    content: string;
-    user: {
-      username: string | null;
-    };
-  }[];
+  id: string;
+  content: string;
+  user: {
+    username: string | null;
+  };
 }[];
 
 export function CommentForm({
@@ -42,6 +40,7 @@ export function CommentForm({
       router.refresh();
     },
   });
+
   return (
     <div>
       <div>
@@ -60,9 +59,9 @@ export function CommentForm({
       </div>
 
       <div>
-        {comments.map((comment) =>
-          comment.comment.map((c) => <div key={c.id}>{c.content}</div>)
-        )}
+        {comments.map((comment) => (
+          <div key={comment.id}>{comment.content}</div>
+        ))}
       </div>
     </div>
   );

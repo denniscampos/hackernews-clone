@@ -1,56 +1,44 @@
-import { db } from '@/lib/db';
 import { getTimeSincePostCreation } from '@/lib/utils';
 import { CommentForm } from './CommentForm';
+import { env } from '@/env.mjs';
+import axios from 'axios';
 
-export default async function Page({ params }: { params: { id: string } }) {
+export const revalidate = 0;
+
+type PostProps = {
+  id: string;
+  title: string;
+  url: string;
+  upvoteCount: number;
+  createdAt: Date;
+  author: {
+    username: string;
+  };
+  comment: {
+    id: string;
+    content: string;
+    user: {
+      username: string;
+    };
+  }[];
+};
+
+export default async function Page({
+  searchParams,
+}: {
+  searchParams: { id: string };
+}) {
   const fetchPost = async () => {
-    'use server';
-    const post = await db.post.findUnique({
-      where: {
-        id: params.id,
-      },
-      select: {
-        id: true,
-        title: true,
-        url: true,
-        upvoteCount: true,
-        createdAt: true,
-        author: {
-          select: {
-            username: true,
-          },
-        },
+    const { data } = await axios.get(`${env.BASE_URL}/api/post`, {
+      params: {
+        id: searchParams.id,
       },
     });
 
-    return post;
+    return data;
   };
-
-  const fetchComments = async () => {
-    'use server';
-
-    const fetchComments = await db.post.findMany({
-      where: {
-        id: params.id,
-      },
-      select: {
-        comment: {
-          select: {
-            id: true,
-            content: true,
-            user: {
-              select: {
-                username: true,
-              },
-            },
-          },
-        },
-      },
-    });
-    return fetchComments;
-  };
-  const post = await fetchPost();
-  const comments = await fetchComments();
+  const post = (await fetchPost()) as PostProps;
+  const comments = post.comment.map((comment) => comment);
 
   return (
     <div>
@@ -60,7 +48,7 @@ export default async function Page({ params }: { params: { id: string } }) {
           <span>{post.url}</span>
           <span>{post.upvoteCount}</span>
           <span>{getTimeSincePostCreation(post.createdAt)}</span>
-          <span>{post.author.username}</span>
+          <span>{post.author?.username}</span>
           <CommentForm postId={post.id} comments={comments} />
         </div>
       )}
