@@ -136,10 +136,7 @@ export function PostCard({
                   </>
                 ) : null}
                 |{' '}
-                <Link
-                  className="hover:underline"
-                  href={`/post/id?id=${post.id}`}
-                >
+                <Link className="hover:underline" href={`/post/${post.id}`}>
                   {post.commentCount} comments
                 </Link>
               </span>

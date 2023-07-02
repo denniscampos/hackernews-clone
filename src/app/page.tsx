@@ -1,5 +1,6 @@
-import { PostCard, PostCardProps } from '@/components/PostCard';
-import { env } from '@/env.mjs';
+import { PostCard } from '@/components/PostCard';
+import { db } from '@/lib/db';
+import { postSelect } from '@/lib/prisma/validator';
 import { getCurrentUser } from '@/lib/session';
 
 export const dynamic = 'force-dynamic';
@@ -7,15 +8,20 @@ export const fetchCache = 'force-no-store';
 
 export default async function Home() {
   const getPosts = async () => {
-    const res = await fetch(`${env.BASE_URL}/api/posts`);
+    const findPosts = await db.post.findMany({
+      orderBy: { createdAt: 'desc' },
+      ...postSelect,
+    });
 
-    if (!res.ok) {
-      throw new Error('Failed to fetch posts');
-    }
+    const postsWithUpvoteCount = findPosts.map(({ _count, ...post }) => {
+      return {
+        ...post,
+        upvoteCount: _count.upvote,
+        commentCount: _count.comment,
+      };
+    });
 
-    const data = (await res.json()) as PostCardProps;
-
-    return data;
+    return postsWithUpvoteCount;
   };
   const user = await getCurrentUser();
   const data = await getPosts();

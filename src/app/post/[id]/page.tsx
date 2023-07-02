@@ -1,6 +1,7 @@
 import { getTimeSincePostCreation } from '@/lib/utils';
 import { CommentForm } from './CommentForm';
 import { env } from '@/env.mjs';
+import { db } from '@/lib/db';
 // import axios from 'axios';
 
 export const dynamic = 'force-dynamic';
@@ -24,28 +25,38 @@ type PostProps = {
   }[];
 };
 
-export default async function Page({
-  searchParams,
-}: {
-  searchParams: { id: string };
-}) {
+export default async function Page({ params }: { params: { id: string } }) {
   const fetchPost = async () => {
-    const url = `${env.BASE_URL}/api/post/?id=${searchParams.id}`;
-    const res = await fetch(url);
+    const post = await db.post.findUnique({
+      where: {
+        id: params.id,
+      },
+      select: {
+        id: true,
+        title: true,
+        url: true,
+        upvoteCount: true,
+        createdAt: true,
+        author: {
+          select: {
+            username: true,
+          },
+        },
+        comment: {
+          select: {
+            id: true,
+            content: true,
+            user: {
+              select: {
+                username: true,
+              },
+            },
+          },
+        },
+      },
+    });
 
-    if (!res.ok) {
-      throw new Error('Failed to fetch post');
-    }
-
-    const data = (await res.json()) as PostProps;
-    return data;
-    // const { data } = await axios.get(`${env.BASE_URL}/api/post`, {
-    //   params: {
-    //     id: searchParams.id,
-    //   },
-    // });
-
-    // return data;
+    return post;
   };
   const post = (await fetchPost()) as PostProps;
   const comments = post?.comment?.map((comment) => comment);
