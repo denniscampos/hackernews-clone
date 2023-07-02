@@ -123,12 +123,16 @@ export function PostCard({
             </div>
             <div className="leading-[0px]">
               <span className="text-xs text-[#828282]">
-                {post.upvoteCount} points by {post.author.username}{' '}
+                {`${post.upvoteCount} ${
+                  post.upvoteCount === 1 ? 'point by' : 'points by'
+                }`}{' '}
+                {post.author.username}{' '}
                 <span>{getTimeSincePostCreation(post.createdAt)}</span>
                 {post.upvote.find((upvote) => upvote.userId === user?.id) ? (
                   <>
                     |{' '}
                     <button
+                      disabled={unvoteMutation.isLoading}
                       onClick={() => unvoteMutation.mutate({ postId: post.id })}
                     >
                       unvote
@@ -137,7 +141,9 @@ export function PostCard({
                 ) : null}
                 |{' '}
                 <Link className="hover:underline" href={`/post/${post.id}`}>
-                  {post.commentCount} comments
+                  {`${post.commentCount} ${
+                    post.commentCount === 1 ? 'comment' : 'comments'
+                  }`}
                 </Link>
               </span>
             </div>

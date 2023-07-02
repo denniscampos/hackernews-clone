@@ -2,6 +2,8 @@ import { getTimeSincePostCreation } from '@/lib/utils';
 import { CommentForm } from './CommentForm';
 import { env } from '@/env.mjs';
 import { db } from '@/lib/db';
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
 // import axios from 'axios';
 
 export const dynamic = 'force-dynamic';
@@ -19,6 +21,7 @@ type PostProps = {
   comment: {
     id: string;
     content: string;
+    createdAt: Date;
     user: {
       username: string;
     };
@@ -46,12 +49,14 @@ export default async function Page({ params }: { params: { id: string } }) {
           select: {
             id: true,
             content: true,
+            createdAt: true,
             user: {
               select: {
                 username: true,
               },
             },
           },
+          orderBy: { createdAt: 'desc' },
         },
       },
     });
@@ -62,14 +67,37 @@ export default async function Page({ params }: { params: { id: string } }) {
   const comments = post?.comment?.map((comment) => comment);
 
   return (
-    <div>
+    <div className="mt-5">
       {post && (
         <div>
-          <p>{post.title}</p>
-          <span>{post.url}</span>
-          <span>{post.upvoteCount}</span>
-          <span>{getTimeSincePostCreation(post.createdAt)}</span>
-          <span>{post.author?.username}</span>
+          <div className="flex items-center mb-1">
+            <div className="w-0 h-0 mr-1 border-l-[5px] border-l-transparent border-b-[10px] border-b-gray-500 border-r-[5px] border-r-transparent"></div>
+            <p className="text-sm">{post.title}</p>
+            <Link href={post.url}>
+              <Button
+                className="text-xs text-[#828282] py-0 pl-2 h-0"
+                variant="link"
+              >
+                ({post.url})
+              </Button>
+            </Link>
+          </div>
+          <div className="flex mb-1 gap-2">
+            <span className="text-sm">
+              {post.upvoteCount === 1
+                ? '1 point'
+                : `${post.upvoteCount} points`}
+            </span>
+            <span className="text-sm">
+              {getTimeSincePostCreation(post.createdAt)}
+            </span>
+            <span className="text-sm">by {post.author?.username}</span>
+            <span className="text-sm">
+              {`${post.comment.length} ${
+                post.comment.length === 1 ? 'comment' : 'comments'
+              }`}{' '}
+            </span>
+          </div>
           <CommentForm postId={post.id} comments={comments} />
         </div>
       )}
