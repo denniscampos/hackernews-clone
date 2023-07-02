@@ -3,8 +3,6 @@ import { CommentForm } from './CommentForm';
 import { env } from '@/env.mjs';
 // import axios from 'axios';
 
-export const revalidate = 0;
-
 type PostProps = {
   id: string;
   title: string;
@@ -29,7 +27,7 @@ export default async function Page({
   searchParams: { id: string };
 }) {
   const fetchPost = async () => {
-    const url = `${env.BASE_URL}/api/post?id=${searchParams.id}`;
+    const url = `${env.BASE_URL}/api/post/?id=${searchParams.id}`;
     const res = await fetch(url, { cache: 'no-store' });
     const data = (await res.json()) as PostProps;
     return data;
@@ -42,7 +40,7 @@ export default async function Page({
     // return data;
   };
   const post = (await fetchPost()) as PostProps;
-  const comments = post.comment.map((comment) => comment);
+  const comments = post?.comment?.map((comment) => comment);
 
   return (
     <div>

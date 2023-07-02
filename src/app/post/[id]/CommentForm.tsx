@@ -59,7 +59,7 @@ export function CommentForm({
       </div>
 
       <div>
-        {comments.map((comment) => (
+        {comments?.map((comment) => (
           <div key={comment.id}>{comment.content}</div>
         ))}
       </div>
