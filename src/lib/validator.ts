@@ -25,6 +25,7 @@ export type UpvoteSchema = z.infer<typeof upvoteSchema>;
 export const commentSchema = z.object({
   postId: z.string(),
   content: z.string(),
+  parentId: z.string().optional(),
 });
 
 export type CommentSchema = z.infer<typeof commentSchema>;

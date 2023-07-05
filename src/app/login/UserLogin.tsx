@@ -3,6 +3,7 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Loader2 } from 'lucide-react';
 import { signIn } from 'next-auth/react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -37,8 +38,8 @@ export function UserLogin() {
       <Input {...register('username')} type="text" />
       <Label htmlFor="password">password</Label>
       <Input {...register('password')} type="password" />
-      <Button disabled={isLoading} type="submit">
-        Sign in
+      <Button className="mt-3" disabled={isLoading} type="submit">
+        {isLoading ? <Loader2 /> : 'Sign in'}
       </Button>
     </form>
   );

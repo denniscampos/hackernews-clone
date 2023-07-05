@@ -9,6 +9,7 @@ import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { UserLogin } from './UserLogin';
 import { useState } from 'react';
+import { Loader2 } from 'lucide-react';
 
 type SignUpProps = {
   username: string;
@@ -57,9 +58,11 @@ export function UserAuthForm() {
   };
 
   return (
-    <div className="flex flex-col justify-center items-center w-full h-full">
+    <div className="flex flex-col p-4 max-w-xs">
       <span className="font-bold">Login</span>
-      <UserLogin />
+      <div className="mb-5">
+        <UserLogin />
+      </div>
       <span className="font-bold">Create Account</span>
       {/* @ts-expect-error */}
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -86,8 +89,8 @@ export function UserAuthForm() {
           name="confirmPassword"
           type="password"
         />
-        <Button disabled={isLoading} className="mb-10">
-          Sign up
+        <Button disabled={isLoading} className="mb-10 mt-3">
+          {isLoading ? <Loader2 /> : 'Sign up'}
         </Button>
       </form>
 
@@ -105,11 +108,11 @@ export function UserAuthForm() {
       <div>
         <Button
           disabled={isLoading}
-          className="w-full"
+          className="w-full mt-3"
           onClick={() => signIn('github', { callbackUrl: '/' })}
         >
           <Icons.gitHub className="mr-2 h-4 w-4" />
-          Github
+          {isLoading ? <Loader2 /> : 'Github'}
         </Button>
       </div>
     </div>

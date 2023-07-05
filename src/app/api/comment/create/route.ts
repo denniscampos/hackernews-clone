@@ -9,7 +9,7 @@ export async function POST(req: NextRequest) {
   const userId = user?.id;
   try {
     const body = await req.json();
-    const { content, postId } = commentSchema.parse(body);
+    const { content, postId, parentId } = commentSchema.parse(body);
 
     await db.comment.create({
       data: {
@@ -24,6 +24,13 @@ export async function POST(req: NextRequest) {
             id: postId,
           },
         },
+        ...(parentId && {
+          parent: {
+            connect: {
+              id: parentId,
+            },
+          },
+        }),
       },
     });
 

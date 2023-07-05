@@ -25,6 +25,16 @@ type PostProps = {
     user: {
       username: string;
     };
+    parentId: string;
+    children: {
+      id: string;
+      parentId: string;
+      content: string;
+      children: {
+        id: string;
+        content: string;
+      }[];
+    }[];
   }[];
 };
 
@@ -55,6 +65,20 @@ export default async function Page({ params }: { params: { id: string } }) {
                 username: true,
               },
             },
+            parentId: true,
+            children: {
+              select: {
+                id: true,
+                parentId: true,
+                content: true,
+                children: {
+                  select: {
+                    id: true,
+                    content: true,
+                  },
+                },
+              },
+            },
           },
           orderBy: { createdAt: 'desc' },
         },
@@ -69,7 +93,7 @@ export default async function Page({ params }: { params: { id: string } }) {
   return (
     <div className="mt-5">
       {post && (
-        <div>
+        <div className="p-2">
           <div className="flex items-center mb-1">
             <div className="w-0 h-0 mr-1 border-l-[5px] border-l-transparent border-b-[10px] border-b-gray-500 border-r-[5px] border-r-transparent"></div>
             <p className="text-sm">{post.title}</p>
