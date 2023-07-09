@@ -7,34 +7,35 @@ import { Button } from '@/components/ui/button';
 export const dynamic = 'force-dynamic';
 export const fetchCache = 'force-no-store';
 
-type PostProps = {
-  id: string;
-  title: string;
-  url: string;
-  upvoteCount: number;
-  createdAt: Date;
-  author: {
-    username: string;
-  };
-  comment: {
-    id: string;
-    content: string;
-    createdAt: Date;
-    user: {
-      username: string;
-    };
-    parentId: string;
-    children: {
-      id: string;
-      parentId: string;
-      content: string;
-      children: {
-        id: string;
-        content: string;
-      }[];
-    }[];
-  }[];
-};
+// TODO: get proper type for the data below
+// type PostProps = {
+//   id: string;
+//   title: string;
+//   url: string;
+//   upvoteCount: number;
+//   createdAt: Date;
+//   author: {
+//     username: string;
+//   };
+//   comment: {
+//     id: string;
+//     content: string;
+//     createdAt: Date;
+//     user: {
+//       username: string;
+//     };
+//     parentId: string;
+//     children: {
+//       id: string;
+//       parentId: string;
+//       content: string;
+//       children: {
+//         id: string;
+//         content: string;
+//       }[];
+//     }[];
+//   }[];
+// };
 
 export default async function Page({ params }: { params: { id: string } }) {
   const fetchPostData = async () => {
@@ -66,8 +67,26 @@ export default async function Page({ params }: { params: { id: string } }) {
         postId: post?.id,
       },
       include: {
-        user: true,
-        children: true,
+        user: {
+          select: {
+            id: true,
+            username: true,
+          },
+        },
+        children: {
+          select: {
+            id: true,
+            content: true,
+            parentId: true,
+            postId: true,
+            createdAt: true,
+            user: {
+              select: {
+                username: true,
+              },
+            },
+          },
+        },
       },
       orderBy: { createdAt: 'asc' },
     });

@@ -8,23 +8,7 @@ import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { CommentSection } from './CommentSection';
-
-type CommentProps = {
-  id: string;
-  content: string;
-  postId: string;
-  parentId: string | null;
-  createdAt: Date;
-  user: {
-    id: string;
-    username: string | null;
-  };
-  children: {
-    id: string;
-    postId: string;
-    content: string;
-  }[];
-}[];
+import { type CommentProps } from './types';
 
 export function CommentForm({
   postId,

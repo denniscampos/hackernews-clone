@@ -8,23 +8,7 @@ import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
 import { Textarea } from '@/components/ui/textarea';
 import { getTimeSincePostCreation } from '@/lib/utils';
-
-type CommentProps = {
-  id: string;
-  content: string;
-  postId: string;
-  parentId: string | null;
-  createdAt: Date;
-  user: {
-    id: string;
-    username: string | null;
-  };
-  children: {
-    id: string;
-    postId: string;
-    content: string;
-  }[];
-}[];
+import { type CommentProps, type NestedCommentProps } from './types';
 
 export function CommentSection({ comments }: { comments?: CommentProps }) {
   const [reply, setReply] = useState('');
@@ -62,13 +46,16 @@ export function CommentSection({ comments }: { comments?: CommentProps }) {
         <div key={comment.id}>
           {comment.parentId === null && (
             <>
-              <div className="border border-gray-100">
-                <span className="inline">{comment.user.username}</span>{' '}
+              <div className="text-[10px] mt-5">
+                <span className="inline font-bold">
+                  {comment.user.username}
+                </span>{' '}
                 <span>{getTimeSincePostCreation(comment.createdAt)}</span>
-                <p>{comment.content}</p>
+                <p className="text-xs">{comment.content}</p>
               </div>
               {!isReplying[index] ? (
                 <Button
+                  className="text-[10px]"
                   onClick={() => setReplyingState(index, true)}
                   variant="link"
                 >
@@ -76,8 +63,13 @@ export function CommentSection({ comments }: { comments?: CommentProps }) {
                 </Button>
               ) : (
                 <div>
-                  <Textarea onChange={(e) => setReply(e.target.value)} />
+                  <Textarea
+                    className="mt-3 text-sm"
+                    placeholder={`replying to ${comment.user.username}`}
+                    onChange={(e) => setReply(e.target.value)}
+                  />
                   <Button
+                    className="text-[10px]"
                     onClick={() => {
                       replyMutation.mutate({
                         postId: comment.postId,
@@ -90,6 +82,7 @@ export function CommentSection({ comments }: { comments?: CommentProps }) {
                     reply
                   </Button>
                   <Button
+                    className="text-[10px]"
                     variant="link"
                     onClick={() => setReplyingState(index, false)}
                   >
@@ -122,7 +115,7 @@ function NestedComment({
   setReply,
   replyMutation,
 }: {
-  comment: any;
+  comment: NestedCommentProps;
   reply: string;
   setReply: (reply: string) => void;
   replyMutation: UseMutationResult<
@@ -137,20 +130,34 @@ function NestedComment({
   >;
 }) {
   const [isReplying, setIsReplying] = useState(false);
+  console.log({ comment });
 
   return (
     <div key={comment.id}>
-      <p>{comment.content}</p>
+      <div className="text-[10px] font-bold">
+        <span>{comment.user?.username}</span>{' '}
+        <span>{getTimeSincePostCreation(comment.createdAt)}</span>
+      </div>
+      <p className="text-xs">{comment.content}</p>
       {!isReplying ? (
         <div>
-          <Button variant="link" onClick={() => setIsReplying(true)}>
+          <Button
+            className="text-[10px]"
+            variant="link"
+            onClick={() => setIsReplying(true)}
+          >
             reply
           </Button>
         </div>
       ) : (
         <div>
-          <Textarea onChange={(e) => setReply(e.target.value)} />
+          <Textarea
+            className="mt-3 text-sm"
+            placeholder={`replying to ${comment.user.username}`}
+            onChange={(e) => setReply(e.target.value)}
+          />
           <Button
+            className="text-[10px]"
             variant="link"
             onClick={() => {
               replyMutation.mutate({
@@ -163,7 +170,11 @@ function NestedComment({
           >
             reply
           </Button>
-          <Button variant="link" onClick={() => setIsReplying(false)}>
+          <Button
+            className="text-[10px]"
+            variant="link"
+            onClick={() => setIsReplying(false)}
+          >
             cancel
           </Button>
         </div>

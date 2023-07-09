@@ -57,21 +57,24 @@ export function PostSubmitForm() {
   });
 
   return (
-    <div className="p-4">
-      <form onSubmit={handleSubmit((data) => postMutation.mutate(data))}>
-        <div className="flex items-center">
-          <Label className="pr-2">title</Label>
+    <div className="p-4 max-w-2xl">
+      <form
+        className="flex flex-col gap-2"
+        onSubmit={handleSubmit((data) => postMutation.mutate(data))}
+      >
+        <div>
+          <Label>title</Label>
           <Input {...register('title')} id="title" name="title" />
         </div>
 
-        <div className="flex items-center">
-          <Label className="pr-2">url</Label>
+        <div>
+          <Label>url</Label>
           <Input {...register('url')} id="url" name="url" />
           {errors.url && <p className="text-red-500">{errors.url.message}</p>}
         </div>
 
-        <div className="flex items-center">
-          <Label className="pr-2">text</Label>
+        <div>
+          <Label>text</Label>
           <Textarea {...register('text')} id="text" name="text" />
         </div>
         <Button>submit</Button>
