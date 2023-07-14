@@ -1,101 +1,14 @@
 import { getTimeSincePostCreation } from '@/lib/utils';
 import { CommentForm } from './CommentForm';
-import { db } from '@/lib/db';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
+import { fetchPostData } from '@/services/comments';
 
 export const dynamic = 'force-dynamic';
 export const fetchCache = 'force-no-store';
 
-// TODO: get proper type for the data below
-// type PostProps = {
-//   id: string;
-//   title: string;
-//   url: string;
-//   upvoteCount: number;
-//   createdAt: Date;
-//   author: {
-//     username: string;
-//   };
-//   comment: {
-//     id: string;
-//     content: string;
-//     createdAt: Date;
-//     user: {
-//       username: string;
-//     };
-//     parentId: string;
-//     children: {
-//       id: string;
-//       parentId: string;
-//       content: string;
-//       children: {
-//         id: string;
-//         content: string;
-//       }[];
-//     }[];
-//   }[];
-// };
-
 export default async function Page({ params }: { params: { id: string } }) {
-  const fetchPostData = async () => {
-    const post = await db.post.findUnique({
-      where: {
-        id: params.id,
-      },
-      select: {
-        id: true,
-        title: true,
-        url: true,
-        upvoteCount: true,
-        createdAt: true,
-        author: {
-          select: {
-            username: true,
-          },
-        },
-        comment: {
-          select: {
-            id: true,
-          },
-        },
-      },
-    });
-
-    const comments = await db.comment.findMany({
-      where: {
-        postId: post?.id,
-      },
-      include: {
-        user: {
-          select: {
-            id: true,
-            username: true,
-          },
-        },
-        children: {
-          select: {
-            id: true,
-            content: true,
-            parentId: true,
-            postId: true,
-            createdAt: true,
-            user: {
-              select: {
-                username: true,
-              },
-            },
-          },
-        },
-      },
-      orderBy: { createdAt: 'asc' },
-    });
-
-    return { post, comments };
-  };
-
-  const { post } = await fetchPostData();
-  const { comments } = await fetchPostData();
+  const { post, comments } = await fetchPostData({ id: params.id });
 
   return (
     <div className="mt-5">

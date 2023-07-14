@@ -46,7 +46,7 @@ export function CommentSection({ comments }: { comments?: CommentProps }) {
         <div key={comment.id}>
           {comment.parentId === null && (
             <>
-              <div className="text-[10px] mt-5">
+              <div className="text-xs mt-5">
                 <span className="inline font-bold">
                   {comment.user.username}
                 </span>{' '}
@@ -55,7 +55,7 @@ export function CommentSection({ comments }: { comments?: CommentProps }) {
               </div>
               {!isReplying[index] ? (
                 <Button
-                  className="text-[10px]"
+                  className="text-xs p-0"
                   onClick={() => setReplyingState(index, true)}
                   variant="link"
                 >
@@ -69,7 +69,7 @@ export function CommentSection({ comments }: { comments?: CommentProps }) {
                     onChange={(e) => setReply(e.target.value)}
                   />
                   <Button
-                    className="text-[10px]"
+                    className="text-xs p-0"
                     onClick={() => {
                       replyMutation.mutate({
                         postId: comment.postId,
@@ -82,7 +82,7 @@ export function CommentSection({ comments }: { comments?: CommentProps }) {
                     reply
                   </Button>
                   <Button
-                    className="text-[10px]"
+                    className="text-xs"
                     variant="link"
                     onClick={() => setReplyingState(index, false)}
                   >
@@ -134,7 +134,7 @@ function NestedComment({
 
   return (
     <div key={comment.id}>
-      <div className="text-[10px] font-bold">
+      <div className="text-xs font-bold">
         <span>{comment.user?.username}</span>{' '}
         <span>{getTimeSincePostCreation(comment.createdAt)}</span>
       </div>
@@ -142,7 +142,7 @@ function NestedComment({
       {!isReplying ? (
         <div>
           <Button
-            className="text-[10px]"
+            className="text-xs p-0"
             variant="link"
             onClick={() => setIsReplying(true)}
           >
@@ -157,7 +157,7 @@ function NestedComment({
             onChange={(e) => setReply(e.target.value)}
           />
           <Button
-            className="text-[10px]"
+            className="text-xs"
             variant="link"
             onClick={() => {
               replyMutation.mutate({
@@ -171,7 +171,7 @@ function NestedComment({
             reply
           </Button>
           <Button
-            className="text-[10px]"
+            className="text-xs"
             variant="link"
             onClick={() => setIsReplying(false)}
           >

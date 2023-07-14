@@ -77,6 +77,7 @@ export function AccountForm({ user }: { user?: User | null }) {
               <td>
                 <Input
                   {...register('email')}
+                  disabled={user?.email ? true : false}
                   name="email"
                   type="email"
                   placeholder="email"

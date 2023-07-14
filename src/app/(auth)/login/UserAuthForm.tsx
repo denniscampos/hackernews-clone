@@ -19,6 +19,7 @@ type SignUpProps = {
 
 export function UserAuthForm() {
   const [isLoading, setIsLoading] = useState(false);
+  const [isGithubLoading, setIsGithubLoading] = useState(false);
   const router = useRouter();
   const { register, handleSubmit } = useForm();
 
@@ -48,12 +49,25 @@ export function UserAuthForm() {
         if (ok) {
           console.log('success');
           router.push('/');
+          router.refresh();
         }
       }
     } catch (e) {
       console.log('something went wrong', e);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleGithubLogin = async () => {
+    setIsGithubLoading(true);
+    try {
+      await signIn('github', { callbackUrl: '/' });
+      router.refresh();
+    } catch (e) {
+      console.log('Something went wrong', { catch: { e } });
+    } finally {
+      setIsGithubLoading(false);
     }
   };
 
@@ -107,12 +121,12 @@ export function UserAuthForm() {
 
       <div>
         <Button
-          disabled={isLoading}
+          disabled={isGithubLoading}
           className="w-full mt-3"
-          onClick={() => signIn('github', { callbackUrl: '/' })}
+          onClick={handleGithubLogin}
         >
           <Icons.gitHub className="mr-2 h-4 w-4" />
-          {isLoading ? <Loader2 /> : 'Github'}
+          {isGithubLoading ? <Loader2 /> : 'Github'}
         </Button>
       </div>
     </div>
