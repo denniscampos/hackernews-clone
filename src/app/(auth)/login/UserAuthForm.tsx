@@ -104,7 +104,7 @@ export function UserAuthForm() {
           type="password"
         />
         <Button disabled={isLoading} className="mb-10 mt-3">
-          {isLoading ? <Loader2 /> : 'Sign up'}
+          {isLoading ? <Loader2 className="flex animate-spin" /> : 'Sign up'}
         </Button>
       </form>
 
@@ -126,7 +126,11 @@ export function UserAuthForm() {
           onClick={handleGithubLogin}
         >
           <Icons.gitHub className="mr-2 h-4 w-4" />
-          {isGithubLoading ? <Loader2 /> : 'Github'}
+          {isGithubLoading ? (
+            <Loader2 className="flex animate-spin" />
+          ) : (
+            'Github'
+          )}
         </Button>
       </div>
     </div>

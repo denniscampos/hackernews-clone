@@ -51,7 +51,7 @@ export const fetchPostData = async (params: { id: string }) => {
         },
       },
     },
-    orderBy: { createdAt: 'asc' },
+    orderBy: { createdAt: 'desc' },
   });
 
   return { post, comments };

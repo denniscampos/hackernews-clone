@@ -39,7 +39,7 @@ export function UserLogin() {
       <Label htmlFor="password">password</Label>
       <Input {...register('password')} type="password" />
       <Button className="mt-3" disabled={isLoading} type="submit">
-        {isLoading ? <Loader2 /> : 'Sign in'}
+        {isLoading ? <Loader2 className="flex animate-spin" /> : 'Sign in'}
       </Button>
     </form>
   );

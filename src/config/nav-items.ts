@@ -6,10 +6,6 @@ export const navItems = [
     href: '/new',
   },
   {
-    title: 'comments',
-    href: '/comments',
-  },
-  {
     title: 'submit',
     href: '/submit',
   },
