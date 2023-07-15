@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { Button } from './ui/button';
-import { getTimeSincePostCreation } from '@/lib/utils';
+import { formatURL, getTimeSincePostCreation } from '@/lib/utils';
 import {
   useInfiniteQuery,
   useMutation,
@@ -163,19 +163,14 @@ export function PostCard({ user }: { user?: User | null }) {
             <div className="mb-2">
               <div className="flex items-center">
                 <Link href={post.url ?? '/'}>
-                  <Button
-                    className="hover:bg-transparent p-0 h-0"
-                    variant="ghost"
-                  >
-                    {post.title}
-                  </Button>
+                  <span className="text-sm">{post.title}</span>
                 </Link>
                 <Link href={post.url ?? '/'}>
                   <Button
                     className="text-xs text-[#828282] py-0 pl-2 h-0"
                     variant="link"
                   >
-                    ({post.url})
+                    ({formatURL(post.url)})
                   </Button>
                 </Link>
               </div>

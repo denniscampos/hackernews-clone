@@ -24,3 +24,10 @@ export function getTimeSincePostCreation(createdAt: Date): string {
     return `${days} ${days === 1 ? 'day' : 'days'} ago`;
   }
 }
+
+export function formatURL(url: string | null) {
+  const urlWithoutProtocol = url?.replace(/^https?:\/\//, ''); // Remove http(s)://
+  const urlWithoutWWW = urlWithoutProtocol?.replace(/^www\./, ''); // Remove www.
+
+  return urlWithoutWWW;
+}

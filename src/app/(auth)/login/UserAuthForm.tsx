@@ -45,7 +45,7 @@ export function UserAuthForm() {
         const { error, ok } = res;
 
         if (error) {
-          throw new Error('username already exists.');
+          throw new Error('Password and confirm password do not match');
         }
 
         if (ok) {

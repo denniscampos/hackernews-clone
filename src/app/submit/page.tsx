@@ -7,7 +7,7 @@ export default async function Submit() {
   const user = await getCurrentUser();
 
   if (!user) {
-    redirect(authOptions.pages?.signIn || '/login');
+    redirect('/login?callbackUrl=/submit' || '/login');
   }
 
   return (

@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Loader2 } from 'lucide-react';
 import { signIn } from 'next-auth/react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 
@@ -15,6 +16,10 @@ type SignInProps = {
 
 export function UserLogin() {
   const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const search = searchParams.get('callbackUrl') ?? '/';
+
   const {
     register,
     handleSubmit,
@@ -29,9 +34,14 @@ export function UserLogin() {
     };
 
     const response = await signIn('credentials', {
-      callbackUrl: '/',
+      redirect: false,
       ...payload,
     });
+
+    if (response?.ok) {
+      router.push(search);
+      router.refresh();
+    }
 
     setIsLoading(false);
     return response;

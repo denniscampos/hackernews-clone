@@ -7,7 +7,7 @@ export default async function Page() {
   const user = await getCurrentUser();
 
   if (!user) {
-    redirect(authOptions.pages?.signIn || '/');
+    redirect('/login?callbackUrl=/account' || '/');
   }
 
   return <AccountForm user={user} />;

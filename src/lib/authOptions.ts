@@ -135,7 +135,7 @@ export const authOptions: NextAuthOptions = {
           return createNewUser;
         } else {
           if (user && user.password) {
-            const isValid = comparePassword(
+            const isValid = await comparePassword(
               credentials.password,
               user.password
             );
