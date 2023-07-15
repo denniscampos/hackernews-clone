@@ -80,7 +80,11 @@ export function PostSubmitForm() {
           <Textarea {...register('text')} id="text" name="text" />
         </div>
         <Button disabled={postMutation.isLoading}>
-          {postMutation.isLoading ? <Loader2 /> : 'submit'}
+          {postMutation.isLoading ? (
+            <Loader2 className="flex animate-spin" />
+          ) : (
+            'submit'
+          )}
         </Button>
       </form>
     </div>

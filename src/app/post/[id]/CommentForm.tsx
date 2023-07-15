@@ -9,6 +9,7 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { CommentSection } from './CommentSection';
 import { type CommentProps } from './types';
+import { Loader2 } from 'lucide-react';
 
 export function CommentForm({
   postId,
@@ -41,6 +42,7 @@ export function CommentForm({
       <div className="my-5">
         <Textarea onChange={(e) => setContent(e.target.value)} />
         <Button
+          disabled={commentMutation.isLoading}
           className="mt-3"
           onClick={() => {
             commentMutation.mutate({
@@ -49,7 +51,11 @@ export function CommentForm({
             });
           }}
         >
-          add comment
+          {commentMutation.isLoading ? (
+            <Loader2 className="flex animate-spin" />
+          ) : (
+            'add comment'
+          )}
         </Button>
         <div>
           <CommentSection comments={comments} />
