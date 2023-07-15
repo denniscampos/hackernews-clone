@@ -11,6 +11,13 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const { content, postId, parentId } = commentSchema.parse(body);
 
+    if (!userId) {
+      return NextResponse.json(
+        { error: 'Unauthorized, please login to reply' },
+        { status: 401 }
+      );
+    }
+
     await db.comment.create({
       data: {
         content,

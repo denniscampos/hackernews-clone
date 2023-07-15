@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { type CommentSchema } from '@/lib/validator';
 import { useMutation } from '@tanstack/react-query';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { CommentSection } from './CommentSection';
@@ -20,6 +20,7 @@ export function CommentForm({
 }) {
   const [content, setContent] = useState('');
   const router = useRouter();
+
   const commentMutation = useMutation({
     mutationKey: ['comment'],
     mutationFn: async ({ postId, content, parentId }: CommentSchema) => {
@@ -36,7 +37,22 @@ export function CommentForm({
       setContent('');
       router.refresh();
     },
+    onError: (e) => {
+      if (e instanceof AxiosError) {
+        if (e.response?.status === 400) {
+          // we only care about the content here.
+          alert(e.response.data.error[0].message);
+          return;
+        }
+
+        if (e.response?.status === 401) {
+          alert(e.response.data.error);
+          return;
+        }
+      }
+    },
   });
+
   return (
     <div>
       <div className="my-5">

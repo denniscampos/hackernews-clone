@@ -2,7 +2,7 @@
 
 import { CommentSchema } from '@/lib/validator';
 import { UseMutationResult, useMutation } from '@tanstack/react-query';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
@@ -30,6 +30,20 @@ export function CommentSection({ comments }: { comments?: CommentProps }) {
     onSettled: () => {
       router.refresh();
       setIsReplying([false]);
+    },
+    onError: (e) => {
+      if (e instanceof AxiosError) {
+        if (e.response?.status === 400) {
+          // we only care about the content here.
+          alert(e.response.data.error[0].message);
+          return;
+        }
+
+        if (e.response?.status === 401) {
+          alert(e.response.data.error);
+          return;
+        }
+      }
     },
   });
 
