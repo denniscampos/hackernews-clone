@@ -11,3 +11,4 @@ Using Next.js 13 app directory, TailwindCSS, Planetscale, Prisma, NextAuth.
 - [x] Comments
 - [x] Nesting Comments
 - [x] Points system
+- [x] Pagination

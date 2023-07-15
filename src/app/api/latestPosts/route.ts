@@ -14,7 +14,7 @@ export async function GET(req: Request) {
         skip: 1,
         cursor: { id: lastCursor },
       }),
-      orderBy: { upvoteCount: 'desc' },
+      orderBy: { createdAt: 'desc' },
       ...postSelect,
     });
 
@@ -43,7 +43,7 @@ export async function GET(req: Request) {
       take: take ? parseInt(take) : 10,
       skip: 1,
       cursor: { id: myCursor },
-      orderBy: { upvoteCount: 'desc' },
+      orderBy: { createdAt: 'desc' },
       ...postSelect,
     });
 
