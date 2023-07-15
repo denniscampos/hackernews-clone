@@ -42,7 +42,7 @@ export function PostSubmitForm() {
       return data;
     },
     onSettled: () => {
-      router.push('/');
+      router.push('/new');
       router.refresh();
     },
     onError: (error) => {
