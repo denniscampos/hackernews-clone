@@ -11,6 +11,7 @@ import { postValidatorSchema } from '@/lib/validator';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { Loader2 } from 'lucide-react';
 
 type FormData = z.infer<typeof postValidatorSchema>;
 
@@ -40,8 +41,9 @@ export function PostSubmitForm() {
 
       return data;
     },
-    onSuccess: () => {
-      alert('success');
+    onSettled: () => {
+      router.push('/');
+      router.refresh();
     },
     onError: (error) => {
       // TODO:
@@ -77,7 +79,9 @@ export function PostSubmitForm() {
           <Label>text</Label>
           <Textarea {...register('text')} id="text" name="text" />
         </div>
-        <Button>submit</Button>
+        <Button disabled={postMutation.isLoading}>
+          {postMutation.isLoading ? <Loader2 /> : 'submit'}
+        </Button>
       </form>
     </div>
   );
