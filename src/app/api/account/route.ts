@@ -13,6 +13,27 @@ export async function POST(request: Request) {
   try {
     const { email, username, about } = accountValidatorSchema.parse(body);
 
+    const existingUser = await db.user.findFirst({
+      where: {
+        OR: [{ username }, { email }],
+      },
+      select: { id: true, username: true, email: true },
+    });
+
+    const isUsernameTaken =
+      existingUser && existingUser.username !== user?.username;
+    const isEmailTaken = existingUser && existingUser.email !== user?.email;
+
+    // Check if the existingUser.id is the same as user.id (same user)
+    const isSameUser = existingUser && existingUser.id === user?.id;
+
+    if ((isEmailTaken || isUsernameTaken) && !isSameUser) {
+      return NextResponse.json(
+        { error: 'Username or email already taken' },
+        { status: 409 }
+      );
+    }
+
     const createPost = await db.user.upsert({
       where: {
         id: user?.id,
@@ -31,7 +52,6 @@ export async function POST(request: Request) {
 
     return NextResponse.json(createPost, { status: 201 });
   } catch (error) {
-    console.error({ error });
     if (error instanceof z.ZodError) {
       return NextResponse.json({ error: error.issues }, { status: 400 });
     }
