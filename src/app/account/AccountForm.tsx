@@ -14,6 +14,7 @@ import { useForm } from 'react-hook-form';
 export function AccountForm({ user }: { user?: User | null }) {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+
   const {
     register,
     handleSubmit,
@@ -41,9 +42,12 @@ export function AccountForm({ user }: { user?: User | null }) {
       return data;
     } catch (e) {
       if (e instanceof AxiosError) {
+        if (e.response?.status === 409) {
+          alert(e.response.data.error);
+          return;
+        }
         alert(e.response?.status);
       }
-      alert(e);
     } finally {
       setIsLoading(false);
     }
@@ -76,7 +80,7 @@ export function AccountForm({ user }: { user?: User | null }) {
               <td>email</td>
               <td>
                 <Input
-                  {...register('email')}
+                  {...register('email', { required: false })}
                   disabled={user?.email ? true : false}
                   name="email"
                   type="email"

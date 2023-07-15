@@ -43,7 +43,7 @@ export function UserAuthForm() {
         const { error, ok } = res;
 
         if (error) {
-          throw new Error('something went wrong.');
+          throw new Error('username already exists.');
         }
 
         if (ok) {
@@ -53,7 +53,7 @@ export function UserAuthForm() {
         }
       }
     } catch (e) {
-      console.log('something went wrong', e);
+      if (e instanceof Error) alert(e.message);
     } finally {
       setIsLoading(false);
     }
