@@ -4,6 +4,7 @@ import { Inter } from 'next/font/google';
 import { navItems } from '@/config/nav-items';
 import { getCurrentUser } from '@/lib/session';
 import Providers from '@/components/Providers';
+import { Toaster } from '@/components/ui/toaster';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -23,6 +24,7 @@ export default async function RootLayout({
       <body className={`max-w-6xl mx-auto my-0 ${inter.className}`}>
         <Navbar items={navItems} user={user} />
         <Providers>{children}</Providers>
+        <Toaster />
       </body>
     </html>
   );

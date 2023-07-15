@@ -9,12 +9,14 @@ import { useRouter } from 'next/navigation';
 import { Textarea } from '@/components/ui/textarea';
 import { getTimeSincePostCreation } from '@/lib/utils';
 import { type CommentProps, type NestedCommentProps } from './types';
+import { useToast } from '@/components/ui/use-toast';
 
 export function CommentSection({ comments }: { comments?: CommentProps }) {
   const [reply, setReply] = useState('');
   // Array to track reply state for each comment
   const [isReplying, setIsReplying] = useState<boolean[]>([]);
   const router = useRouter();
+  const { toast } = useToast();
 
   const replyMutation = useMutation({
     mutationKey: ['reply'],
@@ -35,12 +37,20 @@ export function CommentSection({ comments }: { comments?: CommentProps }) {
       if (e instanceof AxiosError) {
         if (e.response?.status === 400) {
           // we only care about the content here.
-          alert(e.response.data.error[0].message);
+          toast({
+            variant: 'destructive',
+            title: 'Oops',
+            description: e.response.data.error[0].message,
+          });
           return;
         }
 
         if (e.response?.status === 401) {
-          alert(e.response.data.error);
+          toast({
+            variant: 'destructive',
+            title: 'Oops',
+            description: e.response.data.error,
+          });
           return;
         }
       }

@@ -3,6 +3,7 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { useToast } from '@/components/ui/use-toast';
 import { AccountFormRequest, accountValidatorSchema } from '@/lib/validator';
 import { zodResolver } from '@hookform/resolvers/zod';
 import axios, { AxiosError } from 'axios';
@@ -14,6 +15,7 @@ import { useForm } from 'react-hook-form';
 export function AccountForm({ user }: { user?: User | null }) {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+  const { toast } = useToast();
 
   const {
     register,
@@ -43,10 +45,22 @@ export function AccountForm({ user }: { user?: User | null }) {
     } catch (e) {
       if (e instanceof AxiosError) {
         if (e.response?.status === 409) {
-          alert(e.response.data.error);
+          toast({
+            variant: 'destructive',
+            title: 'Oops',
+            description: e.response.data.error,
+          });
           return;
         }
-        alert(e.response?.status);
+
+        if (e.response?.status === 400) {
+          toast({
+            variant: 'destructive',
+            title: 'Oops',
+            description: e.response.data.error[0].message,
+          });
+          return;
+        }
       }
     } finally {
       setIsLoading(false);

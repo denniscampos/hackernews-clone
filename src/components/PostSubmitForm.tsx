@@ -12,11 +12,13 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Loader2 } from 'lucide-react';
+import { useToast } from './ui/use-toast';
 
 type FormData = z.infer<typeof postValidatorSchema>;
 
 export function PostSubmitForm() {
   const router = useRouter();
+  const { toast } = useToast();
   const {
     register,
     handleSubmit,
@@ -45,14 +47,14 @@ export function PostSubmitForm() {
       router.push('/new');
       router.refresh();
     },
-    onError: (error) => {
-      // TODO:
-      // Since we are using zod to validate the form, we can't get the error message from the server.
-      // Error should potentially be different, maybe 500?
-      if (error instanceof AxiosError) {
-        console.log({ error });
-        if (error.response?.status === 400) {
-          alert(error.response.data[0].message);
+    onError: (e) => {
+      if (e instanceof AxiosError) {
+        if (e.response?.status === 400) {
+          toast({
+            variant: 'destructive',
+            title: 'Oops',
+            description: e.response.data.error[0].message,
+          });
         }
       }
     },

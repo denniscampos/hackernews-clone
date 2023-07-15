@@ -10,6 +10,7 @@ import { useForm } from 'react-hook-form';
 import { UserLogin } from './UserLogin';
 import { useState } from 'react';
 import { Loader2 } from 'lucide-react';
+import { useToast } from '@/components/ui/use-toast';
 
 type SignUpProps = {
   username: string;
@@ -22,6 +23,7 @@ export function UserAuthForm() {
   const [isGithubLoading, setIsGithubLoading] = useState(false);
   const router = useRouter();
   const { register, handleSubmit } = useForm();
+  const { toast } = useToast();
 
   const onSubmit = async (data: SignUpProps) => {
     setIsLoading(true);
@@ -53,7 +55,12 @@ export function UserAuthForm() {
         }
       }
     } catch (e) {
-      if (e instanceof Error) alert(e.message);
+      if (e instanceof Error)
+        toast({
+          variant: 'destructive',
+          title: 'Oops',
+          description: e.message,
+        });
     } finally {
       setIsLoading(false);
     }
@@ -65,7 +72,13 @@ export function UserAuthForm() {
       await signIn('github', { callbackUrl: '/' });
       router.refresh();
     } catch (e) {
-      console.log('Something went wrong', { catch: { e } });
+      if (e instanceof Error) {
+        toast({
+          variant: 'destructive',
+          title: 'Oops',
+          description: e.message,
+        });
+      }
     } finally {
       setIsGithubLoading(false);
     }

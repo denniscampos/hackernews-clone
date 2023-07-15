@@ -15,7 +15,11 @@ type SignInProps = {
 
 export function UserLogin() {
   const [isLoading, setIsLoading] = useState(false);
-  const { register, handleSubmit } = useForm<SignInProps>();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<SignInProps>();
 
   const onSubmit = async ({ username, password }: SignInProps) => {
     setIsLoading(true);
@@ -36,8 +40,14 @@ export function UserLogin() {
     <form onSubmit={handleSubmit(onSubmit)}>
       <Label htmlFor="username">username</Label>
       <Input {...register('username')} type="text" />
+      {errors.username && (
+        <p className="text-red-500">{errors.username.message}</p>
+      )}
       <Label htmlFor="password">password</Label>
       <Input {...register('password')} type="password" />
+      {errors.password && (
+        <p className="text-red-500">{errors.password.message}</p>
+      )}
       <Button className="mt-3" disabled={isLoading} type="submit">
         {isLoading ? <Loader2 className="flex animate-spin" /> : 'Sign in'}
       </Button>

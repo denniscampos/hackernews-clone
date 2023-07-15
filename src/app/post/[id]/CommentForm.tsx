@@ -10,6 +10,7 @@ import { useState } from 'react';
 import { CommentSection } from './CommentSection';
 import { type CommentProps } from './types';
 import { Loader2 } from 'lucide-react';
+import { useToast } from '@/components/ui/use-toast';
 
 export function CommentForm({
   postId,
@@ -20,6 +21,7 @@ export function CommentForm({
 }) {
   const [content, setContent] = useState('');
   const router = useRouter();
+  const { toast } = useToast();
 
   const commentMutation = useMutation({
     mutationKey: ['comment'],
@@ -41,12 +43,21 @@ export function CommentForm({
       if (e instanceof AxiosError) {
         if (e.response?.status === 400) {
           // we only care about the content here.
-          alert(e.response.data.error[0].message);
+          toast({
+            variant: 'destructive',
+            title: 'Oops',
+            description: e.response.data.error[0].message,
+          });
+
           return;
         }
 
         if (e.response?.status === 401) {
-          alert(e.response.data.error);
+          toast({
+            variant: 'destructive',
+            title: 'Oops',
+            description: e.response.data.error,
+          });
           return;
         }
       }
