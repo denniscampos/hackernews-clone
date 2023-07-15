@@ -80,7 +80,7 @@ export function AccountForm({ user }: { user?: User | null }) {
               <td>email</td>
               <td>
                 <Input
-                  {...register('email', { required: false })}
+                  {...register('email')}
                   disabled={user?.email ? true : false}
                   name="email"
                   type="email"
