@@ -21,6 +21,7 @@ type SignUpProps = {
 export function UserAuthForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [isGithubLoading, setIsGithubLoading] = useState(false);
+  const [authError, setAuthError] = useState<string | undefined>('');
   const router = useRouter();
   const { register, handleSubmit } = useForm();
   const { toast } = useToast();
@@ -45,7 +46,7 @@ export function UserAuthForm() {
         const { error, ok } = res;
 
         if (error) {
-          throw new Error('Password and confirm password do not match');
+          throw new Error('Passwords do not match. Please try again.');
         }
 
         if (ok) {
@@ -55,12 +56,7 @@ export function UserAuthForm() {
         }
       }
     } catch (e) {
-      if (e instanceof Error)
-        toast({
-          variant: 'destructive',
-          title: 'Oops',
-          description: e.message,
-        });
+      if (e instanceof Error) setAuthError(e.message);
     } finally {
       setIsLoading(false);
     }
@@ -116,6 +112,7 @@ export function UserAuthForm() {
           name="confirmPassword"
           type="password"
         />
+        {authError && <div className="text-red-500">{authError}</div>}
         <Button disabled={isLoading} className="mb-10 mt-3">
           {isLoading ? <Loader2 className="flex animate-spin" /> : 'Sign up'}
         </Button>

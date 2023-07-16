@@ -16,6 +16,7 @@ type SignInProps = {
 
 export function UserLogin() {
   const [isLoading, setIsLoading] = useState(false);
+  const [authError, setAuthError] = useState<string | undefined>('');
   const router = useRouter();
   const searchParams = useSearchParams();
   const search = searchParams.get('callbackUrl') ?? '/';
@@ -38,6 +39,12 @@ export function UserLogin() {
       ...payload,
     });
 
+    if (response?.error !== null) {
+      setAuthError(response?.error);
+      setIsLoading(false);
+      return;
+    }
+
     if (response?.ok) {
       router.push(search);
       router.refresh();
@@ -58,6 +65,7 @@ export function UserLogin() {
       {errors.password && (
         <p className="text-red-500">{errors.password.message}</p>
       )}
+      {authError && <p className="text-red-500">{authError}</p>}
       <Button className="mt-3" disabled={isLoading} type="submit">
         {isLoading ? <Loader2 className="flex animate-spin" /> : 'Sign in'}
       </Button>

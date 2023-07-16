@@ -139,7 +139,10 @@ export const authOptions: NextAuthOptions = {
               credentials.password,
               user.password
             );
-            if (!isValid) return null;
+
+            if (!isValid) {
+              throw new Error('Invalid email or password. Try again.');
+            }
 
             return user;
           } else {
