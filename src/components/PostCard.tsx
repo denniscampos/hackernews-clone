@@ -14,6 +14,7 @@ import { usePathname } from 'next/navigation';
 import { User } from 'next-auth';
 import { Loader2 } from 'lucide-react';
 import { PAGE_SIZE } from '@/constants';
+import { allPosts } from '@/app/services/post';
 
 export type PostCardProps = {
   id: string;
@@ -33,30 +34,6 @@ export type PostCardProps = {
 };
 
 // type PostCardPayload = Prisma.PostGetPayload<typeof postSelect>;
-
-const allPosts = async ({
-  take,
-  lastCursor,
-  params,
-}: {
-  take?: number;
-  lastCursor?: string;
-  params?: string;
-}) => {
-  if (params === '/new') {
-    const { data } = await axios.get('/api/latestPosts', {
-      params: { take, lastCursor },
-    });
-
-    return data;
-  }
-
-  const { data } = await axios.get('/api/posts', {
-    params: { take, lastCursor },
-  });
-
-  return data;
-};
 
 export function PostCard({ user }: { user?: User | null }) {
   const queryClient = useQueryClient();
